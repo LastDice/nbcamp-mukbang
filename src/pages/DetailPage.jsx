@@ -1,11 +1,13 @@
-const DetailPage = () => {
-    return (
-        <>
-            {' '}
-            <div>헤더</div>
-            <div>상세 페이지 코드</div>
-        </>
-    );
-};
+import React from 'react';
+import styled from 'styled-components';
 
-export default DetailPage;
+const Container = styled.div`
+    max-width: 1440px;
+    min-height: 800px;
+    margin: 0 auto;
+    background-color: aqua;
+`;
+
+export default function DetailPage() {
+    return <Container>DetailPage</Container>;
+}
