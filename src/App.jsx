@@ -39,29 +39,21 @@ function App() {
     }, []);
 
     return (
-        <main>
+        <div className="flex flex-col space-y-5 p-14">
+            {signIn ? (
+                <button type="button" onClick={signOut}>로그아웃</button>
+            ) : (
+                <button type='button' onClick={signInWithGithub}>로그인</button>
+            )}
             <ul>
                 {posts.map((post) => (
-                    <li key={post.id}>
-                        <h2>{post.title}</h2>
+                    <div key={post.id} className="flex flex-col p-4 bg-blue-300 rounded-2xl text-black space-y-2">
+                        <h2 className="font-bold">{post.title}</h2>
                         <p>{post.content}</p>
-                    </li>
+                    </div>
                 ))}
             </ul>
-            {signIn ? (
-                <SignInBtn text='로그아웃' onClick={signOut} />
-            ) : (
-                <SignInBtn text='로그인' onClick={signInWithGithub} />
-            )}
-        </main>
-    );
-}
-
-function SignInBtn({ text, onClick }) {
-    return (
-        <button type='button' onClick={onClick}>
-            {text}
-        </button>
+        </div>
     );
 }
 
