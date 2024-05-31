@@ -4,10 +4,8 @@ const SupabaseProviders = Object.freeze({
     Discord: 'discord',
     Github: 'github',
     Google: 'google',
-    Kakao: 'kakao',
     Notion: 'notion',
     Twitch: 'twitch',
-    Zoom: 'zoom',
 });
 
 class Supabase {
@@ -29,7 +27,6 @@ class Supabase {
         });
         return this.isSignIn();
     }
-
 
     async signOut() {
         return await this.supabase.auth.signOut();
