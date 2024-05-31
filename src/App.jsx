@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'react';
 import Supabase, { SupabaseProviders } from './_lib/Supabase.jsx';
-import Detail from './pages/Detail.jsx';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import LoginPage from './pages/LoginPage.jsx';
+import MainPage from './pages/MainPage.jsx';
+import DetailPage from './pages/DetailPage.jsx';
+import MyPage from './pages/MyPage.jsx';
+import WriteReviewPage from './pages/WriteReviewPage.jsx';
+import EditReviewPage from './pages/EditReviewPage.jsx';
 
 const supabase = new Supabase();
 
@@ -22,50 +28,21 @@ function App() {
     }, []);
 
     return (
-        <>
-            <Detail />
-
-            <div className="flex flex-col space-y-5 p-14">
-                {signIn ? (
-                    <button
-                        type="button"
-                        onClick={async () => {
-                            await supabase.signOut();
-                            await updateSignIn();
-                        }}
-                        className="btn btn-primary"
-                    >
-                        로그아웃
-                    </button>
-                ) : (
-                    <div className="flex space-x-4 w-full">
-                        {Object.keys(SupabaseProviders).map((provider, index) => (
-                            <button
-                                type="button"
-                                onClick={async () => {
-                                    await supabase.signIn(provider);
-                                    await updateSignIn();
-                                }}
-                                className="btn btn-info"
-                                key={index}
-                            >
-                                {provider}로 로그인
-                            </button>
-                        ))}
-                    </div>
-                )}
-                <div className="grid grid-cols-4 gap-4 bg-white shadow-2xl p-5 rounded-2xl">
-                    {posts.map((post) => (
-                        <div className="card bg-base-100 shadow-xl" key={post.id}>
-                            <div className="card-body">
-                                <h2 className="card-title">{post.title}</h2>
-                                <p>{post.content}</p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </>
+        <BrowserRouter>
+            <Routes>
+                <Route
+                    path="/login"
+                    element={
+                        <LoginPage signIn={signIn} setSignIn={setSignIn} updateSignIn={updateSignIn} posts={posts} />
+                    }
+                ></Route>
+                <Route path="/" element={<MainPage />}></Route>
+                <Route path="/detail/:id" element={<DetailPage />}></Route>
+                <Route path="/mypage" element={<MyPage />}></Route>
+                <Route path="/write/:id" element={<WriteReviewPage />}></Route>
+                <Route path="/edit/:id" element={<EditReviewPage />}></Route>
+            </Routes>
+        </BrowserRouter>
     );
 }
 
