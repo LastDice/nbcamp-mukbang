@@ -1,39 +1,22 @@
 import { useEffect, useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import Supabase, { SupabaseProviders } from "./_lib/Supabase.jsx";
 
-const supabase = createClient(
-    "https://okzounnvdejvweamyzsd.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9rem91bm52ZGVqdndlYW15enNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTcxMzU2MDYsImV4cCI6MjAzMjcxMTYwNn0.0gOgO3J5ybGbHANtLp9xe-QpmS-CL1EVxG1mcyBqHzw"
-);
-
-const Providers = Object.freeze({
-    Discord: 'discord',
-    Github: 'github',
-    Google: 'google',
-    Kakao: 'kakao',
-    Notion: 'notion',
-    Twitch: 'twitch',
-    Zoom: 'zoom',
-});
+const supabase = new Supabase();
 
 function App() {
     const [posts, setPosts] = useState([]);
     const [signIn, setSignIn] = useState(false);
 
     async function getPosts() {
-        const { data } = await supabase.from('posts').select();
-        setPosts(data);
+        setPosts(await supabase.getMainPosts());
     }
 
-    async function checkSignIn() {
-        const session = await supabase.auth.getSession();
-        const isSignIn = !!session.data.session;
-
-        setSignIn(isSignIn);
+    async function updateSignIn() {
+        setSignIn(await supabase.isSignIn());
     }
 
     useEffect(() => {
-        checkSignIn();
+        updateSignIn();
         getPosts();
     }, []);
 
@@ -41,18 +24,16 @@ function App() {
         <div className="flex flex-col space-y-5 p-14">
             {signIn ? (
                 <button type="button" onClick={async () => {
-                    await supabase.auth.signOut();
-                    await checkSignIn();
+                    await supabase.signOut();
+                    await updateSignIn();
                 }} className="btn btn-primary">로그아웃</button>
             ) : (
                 <div className="flex space-x-4 w-full">
                     {
-                        Object.keys(Providers).map((provider, index) => (
+                        Object.keys(SupabaseProviders).map((provider, index) => (
                             <button type="button" onClick={async () => {
-                                await supabase.auth.signInWithOAuth({
-                                    provider: provider
-                                });
-                                await checkSignIn();
+                                await supabase.signIn(provider);
+                                await updateSignIn();
                             }} className="btn btn-info" key={index}>{provider}로 로그인</button>
                         ))
                     }
