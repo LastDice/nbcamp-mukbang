@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import Supabase, { SupabaseProviders } from './_lib/Supabase.jsx';
+import Supabase from './_lib/Supabase.jsx';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import LoginPage from './pages/LoginPage.jsx';
 import MainPage from './pages/MainPage.jsx';
@@ -11,12 +11,7 @@ import EditReviewPage from './pages/EditReviewPage.jsx';
 const supabase = new Supabase();
 
 function App() {
-    const [posts, setPosts] = useState([]);
     const [signIn, setSignIn] = useState(false);
-
-    async function getPosts() {
-        setPosts(await supabase.getMainPosts());
-    }
 
     async function updateSignIn() {
         setSignIn(await supabase.isSignIn());
@@ -24,7 +19,6 @@ function App() {
 
     useEffect(() => {
         updateSignIn();
-        getPosts();
     }, []);
 
     return (
@@ -36,11 +30,11 @@ function App() {
                         <LoginPage signIn={signIn} setSignIn={setSignIn} updateSignIn={updateSignIn} posts={posts} />
                     }
                 ></Route>
-                <Route path="/" element={<MainPage />}></Route>
-                <Route path="/detail/:id" element={<DetailPage />}></Route>
-                <Route path="/mypage" element={<MyPage />}></Route>
-                <Route path="/write/:id" element={<WriteReviewPage />}></Route>
-                <Route path="/edit/:id" element={<EditReviewPage />}></Route>
+                <Route path="/" element={<MainPage />} />
+                <Route path="/detail/:id" element={<DetailPage />} />
+                <Route path="/mypage" element={<MyPage />} />
+                <Route path="/write/:id" element={<WriteReviewPage />} />
+                <Route path="/edit/:id" element={<EditReviewPage />} />
             </Routes>
         </BrowserRouter>
     );
