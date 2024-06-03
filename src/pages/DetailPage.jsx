@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { AiFillEdit } from 'react-icons/ai';
 
 const Container = styled.div`
     max-width: 1440px;
@@ -75,6 +76,15 @@ const ReviwTitle = styled.div`
     font-size: 40px;
 `;
 
+const ReviwBtn = styled.button`
+    font-size: 18px;
+    float: right;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 30px;
+`;
+
 const ReviwComment = styled.div`
     background-color: aliceblue;
     width: 1000px;
@@ -97,7 +107,7 @@ export default function DetailPage() {
             <div className="navbar bg-base-100">
                 <div className="flex-1">
                     <a className="btn btn-ghost text-xl" onClick={navigateMainPage}>
-                        daisyUI
+                        MuckBang
                     </a>
                 </div>
                 <div className="flex-none gap-2">
@@ -146,14 +156,14 @@ export default function DetailPage() {
                 <ReviwTitle>
                     <h3>
                         Review{' '}
-                        <button
+                        <ReviwBtn
                             className="text-sm "
                             onClick={() => {
                                 navigate(`/write`);
                             }}
                         >
-                            리뷰 쓰기
-                        </button>
+                            <AiFillEdit size={20} /> 리뷰 쓰기
+                        </ReviwBtn>
                     </h3>
                 </ReviwTitle>
             </ReviwTitleBox>
