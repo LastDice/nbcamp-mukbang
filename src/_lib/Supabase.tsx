@@ -40,10 +40,12 @@ class Supabase {
         return await this.supabase.auth.signOut();
     }
 
-    async getMainPosts() {
+    async getPosts() {
         const { data } = await this.supabase.from('posts').select();
         return data;
     }
+
+    // [IMG=supabase]https://i.imgur.com/1Q6Q6Zz.png[/IMG]
 
     async writePosts(title: string, content: string): Promise<Result> {
         const isSignIn = await this.isSignIn();
@@ -171,6 +173,66 @@ class Supabase {
             success: true,
             message: '성공적으로 설정되었습니다.'
         };
+    }
+
+    async setProfileImg(file: File): Promise<Result> {
+        const isSignIn = await this.isSignIn();
+        if (!isSignIn) {
+            return {
+                success: false,
+                message: '로그인이 필요합니다.'
+            }
+        }
+
+        const user_data = await this.supabase.auth.getUser();
+        const { data, error } = await this.supabase.storage.from('profile_img').upload(file.name, file);
+        if (error) {
+            return {
+                success: false,
+                message: '프로필 이미지 업로드에 실패했습니다: ' + error.message
+            }
+        }
+
+        const profile_data = await this.supabase.from('profile_img').select().eq('user_id', user_data.data.user.id);
+        if (profile_data.data.length > 0) {
+            const { error } = await this.supabase.from('profile_img').update({ img_path: data.path }).eq('user_id', user_data.data.user.id)
+            if (error) {
+                return {
+                    success: false,
+                    message: '프로필 이미지 설정에 실패했습니다: ' + error.message
+                }
+            }
+        } else {
+            const { error } = await this.supabase.from('profile_img').insert([
+                { user_id: user_data.data.user.id, img_path: data.path }
+            ]);
+            if (error) {
+                return {
+                    success: false,
+                    message: '프로필 이미지 설정에 실패했습니다: ' + error.message
+                }
+            }
+        }
+
+        return {
+            success: true,
+            message: '성공적으로 설정되었습니다.'
+        };
+    }
+
+    async getProfileImg(): Promise<string> {
+        const img_data = await this.supabase.storage.from('profile_img').download(await (async () => {
+            const isSignIn = await this.isSignIn();
+            if (isSignIn) {
+                const user_data = await this.supabase.auth.getUser();
+                const profile_data = await this.supabase.from('profile_img').select().eq('user_id', user_data.data.user.id);
+                if (profile_data.data.length !== 0) {
+                    return profile_data.data[0].img_path;
+                }
+            }
+            return '280399195_364166439077307_3657201037652503136_n.jpg';
+        })());
+        return URL.createObjectURL(img_data.data);
     }
 }
 
