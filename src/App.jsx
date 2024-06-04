@@ -12,8 +12,8 @@ import WritePage from './_example/WritePage.jsx';
 const supabase = new Supabase();
 
 function App() {
-    const [signIn, setSignIn] = useState(false);
     const [posts, setPosts] = useState([]);
+    const [signIn, setSignIn] = useState(false);
 
     async function updateSignIn() {
         setSignIn(await supabase.isSignIn());
