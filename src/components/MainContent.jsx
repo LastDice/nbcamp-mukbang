@@ -50,13 +50,13 @@ function MainContent() {
     const navigate = useNavigate();
 
     const handleCreateClick = (id) => {
-        navigate(`/detail'/${id}`);
+        navigate(`/detail/${id}`);
     };
 
     useEffect(() => {
         // Supabase에서 데이터 가져오기
         const fetchData = async () => {
-            const { data, error } = await supabase.from('posts').select('title, content');
+            const { data, error } = await supabase.from('posts').select('post_id, title, content');
 
             if (error) {
                 console.error('Error fetching data:', error);
@@ -74,7 +74,7 @@ function MainContent() {
                 <div
                     key={card.id}
                     className="card card-compact w-80 bg-base-100 shadow-xl"
-                    onClick={() => handleCreateClick(card.id)}
+                    onClick={() => handleCreateClick(card.post_id)}
                 >
                     <figure className="food-photo">
                         <img src={card.image_url} alt="food" />
