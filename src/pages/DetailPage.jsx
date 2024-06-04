@@ -6,7 +6,7 @@ import styled from 'styled-components';
 
 const Container = styled.div`
     max-width: 1440px;
-    min-height: 2000px;
+    min-height: 2500px;
     margin: 0 auto;
 `;
 
@@ -47,6 +47,16 @@ const ContentBox = styled.div`
     justify-content: center;
     margin: 0 auto;
     margin-top: 30px;
+`;
+
+const MainImgBox = styled.div`
+    width: 1000px;
+    height: 400px;
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+    margin-top: 50px;
+    background-color: aqua;
 `;
 
 const ReviwTitleBox = styled.div`
@@ -127,6 +137,15 @@ export default function DetailPage() {
         return '';
     }
 
+    // const deleteDatas = async () => {
+    //     const { data, error } = await supabase.from('posts').delete().eq('post_id', id);
+    //     if (error) {
+    //         console.error('Error fetching data:', error);
+    //     } else {
+    //         setDatas(data[0]);
+    //     }
+    // };
+
     return (
         <Container>
             <div className="navbar bg-base-100">
@@ -170,6 +189,7 @@ export default function DetailPage() {
             </div>
 
             <div>
+                <MainImgBox />
                 <DetileTitle>
                     <p>{datas.title}</p>
                 </DetileTitle>
