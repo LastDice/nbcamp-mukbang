@@ -236,8 +236,14 @@ class Supabase {
         return img_data.data.publicUrl
     }
 
-    async uploadImage(image_path: string, file: File): Promise<Result> {
-        const { data, error } = await this.supabase.storage.from('images').upload(image_path, file);
+    async uploadImage(file: File): Promise<Result> {
+        // 랜덤 생성 UUIDv4
+        const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+
+        const { data, error } = await this.supabase.storage.from('images').upload(uuid, file);
         if (error) {
             return {
                 success: false,
@@ -248,7 +254,7 @@ class Supabase {
         return {
             success: true,
             message: '성공적으로 업로드되었습니다.',
-            data: data.path
+            data: this.supabase.storage.from('images').getPublicUrl(data.path).data.publicUrl
         };
     }
 
