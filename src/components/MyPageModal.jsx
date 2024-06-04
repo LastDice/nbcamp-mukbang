@@ -3,38 +3,38 @@ import MyPageModal from '../components/MyPageModal';
 
 export default function MyPage() {
     const [showModal, setShowModal] = useState(false);
+    const [profileImage, setProfileImage] = useState(
+        'https://play-lh.googleusercontent.com/38AGKCqmbjZ9OuWx4YjssAz3Y0DTWbiM5HB0ove1pNBq_o9mtWfGszjZNxZdwt_vgHo'
+    );
+    const [nickname, setNickname] = useState('홍길동');
+    const [description, setDescription] = useState('즐거운 날입니다.');
+
+    const handleSaveChanges = (image, nick, desc) => {
+        setProfileImage(image);
+        setNickname(nick);
+        setDescription(desc);
+    };
 
     return (
         <>
             <div>헤더</div>
 
-            {/* 프로필 사진 */}
-            <div class="container mx-auto py-40 flex gap-20">
-                <div class="relative">
-                    <div class="h-full rounded-full overflow-hidden object-contain h-48 w-48">
-                        <img
-                            src="https://play-lh.googleusercontent.com/38AGKCqmbjZ9OuWx4YjssAz3Y0DTWbiM5HB0ove1pNBq_o9mtWfGszjZNxZdwt_vgHo"
-                            alt=""
-                        />
+            <div className="container mx-auto py-40 flex gap-20">
+                <div className="relative">
+                    <div className="h-full rounded-full overflow-hidden object-contain h-48 w-48">
+                        <img src={profileImage} alt="Profile" />
                     </div>
                 </div>
 
-                {/* 프로필 내용 */}
-                <div class="my-auto flex flex-col gap-3">
-                    <h1 class="text-3xl font-medium">홍길동</h1>
-                    <p class="text-gray-400">즐거운 날입니다.</p>
-                    <div class="flex item-stretch gap-4 ">
-                        <button
-                            data-modal-target="default-modal"
-                            data-modal-toggle="default-modal"
-                            class="p-2 ring-1 ring-gray-400 rounded-full"
-                            onClick={() => setShowModal(true)}
-                        >
+                <div className="my-auto flex flex-col gap-3">
+                    <h1 className="text-3xl font-medium">{nickname}</h1>
+                    <p className="text-gray-400">{description}</p>
+                    <div className="flex item-stretch gap-4">
+                        <button className="p-2 ring-1 ring-gray-400 rounded-full" onClick={() => setShowModal(true)}>
                             프로필 수정
                         </button>
-                        <button class="p-2 ring-1 ring-gray-400 rounded-full">비밀번호 변경</button>
+                        <button className="p-2 ring-1 ring-gray-400 rounded-full">비밀번호 변경</button>
                     </div>
-                    <MyPageModal isVisible={showModal} onClose={() => setShowModal(false)} />
                 </div>
             </div>
 
@@ -144,6 +144,15 @@ export default function MyPage() {
             </div>
 
             <div>푸더</div>
+
+            <MyPageModal
+                isVisible={showModal}
+                onClose={() => setShowModal(false)}
+                onSave={handleSaveChanges}
+                currentImage={profileImage}
+                currentNickname={nickname}
+                currentDescription={description}
+            />
         </>
     );
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import Supabase, { SupabaseProviders } from './_lib/Supabase.jsx';
+import Supabase, { SupabaseProviders } from './_lib/Supabase.tsx';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import LoginPage from './pages/LoginPage.jsx';
 import MainPage from './pages/MainPage.jsx';
@@ -37,10 +37,10 @@ function App() {
                     }
                 ></Route>
                 <Route path="/" element={<MainPage />}></Route>
-                <Route path="/detail/:id" element={<DetailPage />}></Route>
+                <Route path="/detail" element={<DetailPage />}></Route>
                 <Route path="/mypage" element={<MyPage />}></Route>
-                <Route path="/write/:id" element={<WriteReviewPage />}></Route>
-                <Route path="/edit/:id" element={<EditReviewPage />}></Route>
+                <Route path="/write" element={<WriteReviewPage />}></Route>
+                <Route path="/edit" element={<EditReviewPage />}></Route>
             </Routes>
         </BrowserRouter>
     );
