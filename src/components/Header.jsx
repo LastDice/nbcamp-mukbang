@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 const HeaderWrapper = styled.div`
     display: flex;
@@ -14,11 +15,31 @@ const HeaderWrapper = styled.div`
 `;
 
 function Header() {
+    const navigate = useNavigate();
+
+    const handleMyPageClick = () => {
+        navigate('/mypage');
+    };
+
+    const handleProfileEditClick = () => {
+        navigate('/mypage');
+    };
+
+    const handleLoginClick = () => {
+        navigate('/login');
+    };
+
+    const handleMukbangClick = () => {
+        navigate('/');
+    };
+
     return (
         <HeaderWrapper>
             <div className="navbar bg-base-100 shadow">
                 <div className="flex-1">
-                    <a className="btn btn-ghost text-xl">MUKBANG</a>
+                    <a className="btn btn-ghost text-xl" onClick={handleMukbangClick}>
+                        MUKBANG
+                    </a>
                 </div>
                 <div className="flex-none gap-2">
                     <div className="form-control">
@@ -42,16 +63,16 @@ function Header() {
                             className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52"
                         >
                             <li>
-                                <a className="justify-between">
+                                <a className="justify-between" onClick={handleMyPageClick}>
                                     마이페이지
                                     <span className="badge">New</span>
                                 </a>
                             </li>
                             <li>
-                                <a>프로필 수정</a>
+                                <a onClick={handleProfileEditClick}>프로필 수정</a>
                             </li>
                             <li>
-                                <a>로그아웃</a>
+                                <a onClick={handleLoginClick}>로그인</a>
                             </li>
                         </ul>
                     </div>

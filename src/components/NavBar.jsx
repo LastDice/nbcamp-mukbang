@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 const NavBarWrapper = styled.div`
     display: flex;
     align-items: center;
-    margin-bottom: 30px;
 
     .dropdown {
         margin-left: 15px;
@@ -17,6 +17,12 @@ const NavBarWrapper = styled.div`
 `;
 
 function NavBar() {
+    const navigate = useNavigate();
+
+    const handleCreateClick = () => {
+        navigate('/write');
+    };
+
     return (
         <NavBarWrapper>
             <div className="dropdown">
@@ -33,7 +39,9 @@ function NavBar() {
                 </ul>
             </div>
             <div className="createbtn">
-                <button className="btn btn-warning">새 글 작성 +</button>
+                <button className="btn btn-warning" onClick={handleCreateClick}>
+                    새 글 작성 +
+                </button>
             </div>
         </NavBarWrapper>
     );
