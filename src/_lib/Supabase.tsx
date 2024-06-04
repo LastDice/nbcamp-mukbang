@@ -12,6 +12,7 @@ const SupabaseProviders = Object.freeze({
 type Result = {
     success: boolean;
     message: string;
+    data?: string;
 };
 
 // noinspection JSUnusedGlobalSymbols
@@ -221,7 +222,7 @@ class Supabase {
     }
 
     async getProfileImg(): Promise<string> {
-        const img_data = await this.supabase.storage.from('profile_img').download(await (async () => {
+        const img_data = this.supabase.storage.from('profile_img').getPublicUrl(await (async () => {
             const isSignIn = await this.isSignIn();
             if (isSignIn) {
                 const user_data = await this.supabase.auth.getUser();
@@ -230,9 +231,30 @@ class Supabase {
                     return profile_data.data[0].img_path;
                 }
             }
-            return '280399195_364166439077307_3657201037652503136_n.jpg';
+            return "280399195_364166439077307_3657201037652503136_n";
         })());
-        return URL.createObjectURL(img_data.data);
+        return img_data.data.publicUrl
+    }
+
+    async uploadImage(image_path: string, file: File): Promise<Result> {
+        const { data, error } = await this.supabase.storage.from('images').upload(image_path, file);
+        if (error) {
+            return {
+                success: false,
+                message: '이미지 업로드에 실패했습니다: ' + error.message
+            }
+        }
+
+        return {
+            success: true,
+            message: '성공적으로 업로드되었습니다.',
+            data: data.path
+        };
+    }
+
+    async getImage(image_path: string): Promise<string> {
+        const img_data = this.supabase.storage.from('images').getPublicUrl(image_path)
+        return img_data.data.publicUrl;
     }
 }
 
