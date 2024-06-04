@@ -1,4 +1,4 @@
-import Supabase, { SupabaseProviders } from '../_lib/Supabase.jsx';
+import Supabase, { SupabaseProviders } from '../_lib/Supabase.tsx';
 
 const supabase = new Supabase();
 
