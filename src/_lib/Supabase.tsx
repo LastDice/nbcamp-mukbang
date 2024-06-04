@@ -1,5 +1,5 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { Provider } from '@supabase/supabase-js';
+import { Provider } from '@supabase/auth-js/src/lib/types';
 
 const SupabaseProviders = Object.freeze({
     Discord: 'discord',
@@ -17,8 +17,7 @@ type Result = {
 
 // noinspection JSUnusedGlobalSymbols
 class Supabase {
-    private supabase: SupabaseClient;
-
+    private supabase: SupabaseClient<any, any, any>;
     constructor() {
         this.supabase = createClient(
             'https://okzounnvdejvweamyzsd.supabase.co',
@@ -26,36 +25,28 @@ class Supabase {
         );
     }
 
-    from(table: string) {
-        return this.supabase.from(table);
-    }
-
     async isSignIn() {
         const session = await this.supabase.auth.getSession();
-        return session.data.session !== null;
+        return !!session.data.session;
     }
 
-    async signIn(provider: Provider) {
+    async signIn(provider: string) {
         await this.supabase.auth.signInWithOAuth({
-            provider: provider
+            provider: provider as Provider
         });
         return this.isSignIn();
     }
 
     async signOut() {
-        const { error } = await this.supabase.auth.signOut();
-        if (error) {
-            throw error;
-        }
+        return await this.supabase.auth.signOut();
     }
 
     async getPosts() {
-        const { data, error } = await this.supabase.from('posts').select();
-        if (error) {
-            throw error;
-        }
+        const { data } = await this.supabase.from('posts').select();
         return data;
     }
+
+    // [IMG=supabase]https://i.imgur.com/1Q6Q6Zz.png[/IMG]
 
     async writePosts(title: string, content: string): Promise<Result> {
         const isSignIn = await this.isSignIn();
@@ -66,12 +57,12 @@ class Supabase {
             };
         }
 
-        const { error } = await this.supabase.from('posts').insert([{ title, content }]);
+        const result = await this.supabase.from('posts').insert([{ title, content }]);
 
-        if (error) {
+        if (result.error) {
             return {
                 success: false,
-                message: '글 작성에 실패했습니다: ' + error.message
+                message: '글 작성에 실패했습니다: ' + result.statusText
             };
         }
 
@@ -85,20 +76,12 @@ class Supabase {
         const isSignIn = await this.isSignIn();
         if (!isSignIn) return false;
 
-        const { data: user_data, error: user_error } = await this.supabase.auth.getUser();
-        if (user_error) {
-            throw user_error;
-        }
-
-        const { data, error } = await this.supabase
+        const user_data = await this.supabase.auth.getUser();
+        const { data } = await this.supabase
             .from('likes')
             .select()
             .eq('post_id', post_id)
-            .eq('user_id', user_data.user.id);
-        if (error) {
-            throw error;
-        }
-
+            .eq('user_id', user_data.data.user.id);
         return data.length > 0;
     }
 
@@ -111,29 +94,25 @@ class Supabase {
             };
         }
 
-        const { data: user_data, error: user_error } = await this.supabase.auth.getUser();
-        if (user_error) {
-            throw user_error;
-        }
-
+        const user_data = await this.supabase.auth.getUser();
         if (liked) {
-            const { error } = await this.supabase.from('likes').insert([{ post_id, user_id: user_data.user.id }]);
-            if (error) {
+            const result = await this.supabase.from('likes').insert([{ post_id, user_id: user_data.data.user.id }]);
+            if (result.error) {
                 return {
                     success: false,
-                    message: '좋아요 설정에 실패했습니다: ' + error.message
+                    message: '좋아요 설정에 실패했습니다: ' + result.statusText
                 };
             }
         } else {
-            const { error } = await this.supabase
+            const result = await this.supabase
                 .from('likes')
                 .delete()
                 .eq('post_id', post_id)
-                .eq('user_id', user_data.user.id);
-            if (error) {
+                .eq('user_id', user_data.data.user.id);
+            if (result.error) {
                 return {
                     success: false,
-                    message: '좋아요 해제에 실패했습니다: ' + error.message
+                    message: '좋아요 해제에 실패했습니다: ' + result.statusText
                 };
             }
         }
@@ -145,10 +124,7 @@ class Supabase {
     }
 
     async getPostAvgRating(post_id: string): Promise<number> {
-        const { data, error } = await this.supabase.from('ratings').select('rating').eq('post_id', post_id);
-        if (error) {
-            throw error;
-        }
+        const { data } = await this.supabase.from('ratings').select('rating').eq('post_id', post_id);
         if (data.length === 0) return 0;
 
         return data.reduce((acc: number, cur: { rating: number }) => acc + cur.rating, 0) / data.length;
@@ -158,19 +134,12 @@ class Supabase {
         const isSignIn = await this.isSignIn();
         if (!isSignIn) return 0;
 
-        const { data: user_data, error: user_error } = await this.supabase.auth.getUser();
-        if (user_error) {
-            throw user_error;
-        }
-
-        const { data, error } = await this.supabase
+        const user_data = await this.supabase.auth.getUser();
+        const { data } = await this.supabase
             .from('ratings')
             .select('rating')
             .eq('post_id', post_id)
-            .eq('user_id', user_data.user.id);
-        if (error) {
-            throw error;
-        }
+            .eq('user_id', user_data.data.user.id);
         if (data.length === 0) return 0;
 
         return data[0].rating;
@@ -185,40 +154,34 @@ class Supabase {
             };
         }
 
-        const { data: user_data, error: user_error } = await this.supabase.auth.getUser();
-        if (user_error) {
-            throw user_error;
-        }
+        const user_data = await this.supabase.auth.getUser();
 
-        const { data, error } = await this.supabase
+        // 본인이 남긴 리뷰가 있는지 확인.
+        const { data } = await this.supabase
             .from('ratings')
             .select()
             .eq('post_id', post_id)
-            .eq('user_id', user_data.user.id);
-        if (error) {
-            throw error;
-        }
-
+            .eq('user_id', user_data.data.user.id);
         if (data.length > 0) {
-            const { error: update_error } = await this.supabase
+            const result = await this.supabase
                 .from('ratings')
                 .update({ rating })
                 .eq('post_id', post_id)
-                .eq('user_id', user_data.user.id);
-            if (update_error) {
+                .eq('user_id', user_data.data.user.id);
+            if (result.error) {
                 return {
                     success: false,
-                    message: '평점 설정에 실패했습니다: ' + update_error.message
+                    message: '평점 설정에 실패했습니다: ' + result.statusText
                 };
             }
         } else {
-            const { error: insert_error } = await this.supabase
+            const result = await this.supabase
                 .from('ratings')
-                .insert([{ post_id, user_id: user_data.user.id, rating }]);
-            if (insert_error) {
+                .insert([{ post_id, user_id: user_data.data.user.id, rating }]);
+            if (result.error) {
                 return {
                     success: false,
-                    message: '평점 설정에 실패했습니다: ' + insert_error.message
+                    message: '평점 설정에 실패했습니다: ' + result.statusText
                 };
             }
         }
@@ -238,11 +201,7 @@ class Supabase {
             };
         }
 
-        const { data: user_data, error: user_error } = await this.supabase.auth.getUser();
-        if (user_error) {
-            throw user_error;
-        }
-
+        const user_data = await this.supabase.auth.getUser();
         const { data, error } = await this.supabase.storage.from('profile_img').upload(file.name, file);
         if (error) {
             return {
@@ -251,33 +210,26 @@ class Supabase {
             };
         }
 
-        const { data: profile_data, error: profile_error } = await this.supabase
-            .from('profile_img')
-            .select()
-            .eq('user_id', user_data.user.id);
-        if (profile_error) {
-            throw profile_error;
-        }
-
-        if (profile_data.length > 0) {
-            const { error: update_error } = await this.supabase
+        const profile_data = await this.supabase.from('profile_img').select().eq('user_id', user_data.data.user.id);
+        if (profile_data.data.length > 0) {
+            const { error } = await this.supabase
                 .from('profile_img')
                 .update({ img_path: data.path })
-                .eq('user_id', user_data.user.id);
-            if (update_error) {
+                .eq('user_id', user_data.data.user.id);
+            if (error) {
                 return {
                     success: false,
-                    message: '프로필 이미지 설정에 실패했습니다: ' + update_error.message
+                    message: '프로필 이미지 설정에 실패했습니다: ' + error.message
                 };
             }
         } else {
-            const { error: insert_error } = await this.supabase
+            const { error } = await this.supabase
                 .from('profile_img')
-                .insert([{ user_id: user_data.user.id, img_path: data.path }]);
-            if (insert_error) {
+                .insert([{ user_id: user_data.data.user.id, img_path: data.path }]);
+            if (error) {
                 return {
                     success: false,
-                    message: '프로필 이미지 설정에 실패했습니다: ' + insert_error.message
+                    message: '프로필 이미지 설정에 실패했습니다: ' + error.message
                 };
             }
         }
@@ -289,40 +241,30 @@ class Supabase {
     }
 
     async getProfileImg(): Promise<string> {
-        const isSignIn = await this.isSignIn();
-        let imgPath = '280399195_364166439077307_3657201037652503136_n';
-
-        if (isSignIn) {
-            const { data: user_data, error: user_error } = await this.supabase.auth.getUser();
-            if (user_error) {
-                throw user_error;
-            }
-
-            const { data: profile_data, error: profile_error } = await this.supabase
-                .from('profile_img')
-                .select()
-                .eq('user_id', user_data.user.id);
-            if (profile_error) {
-                throw profile_error;
-            }
-
-            if (profile_data.length !== 0) {
-                imgPath = profile_data[0].img_path;
-            }
-        }
-
-        try {
-            const { data: img_data } = this.supabase.storage.from('profile_img').getPublicUrl(imgPath);
-            return img_data.publicUrl;
-        } catch (error) {
-            throw error;
-        }
+        const img_data = this.supabase.storage.from('profile_img').getPublicUrl(
+            await (async () => {
+                const isSignIn = await this.isSignIn();
+                if (isSignIn) {
+                    const user_data = await this.supabase.auth.getUser();
+                    const profile_data = await this.supabase
+                        .from('profile_img')
+                        .select()
+                        .eq('user_id', user_data.data.user.id);
+                    if (profile_data.data.length !== 0) {
+                        return profile_data.data[0].img_path;
+                    }
+                }
+                return '280399195_364166439077307_3657201037652503136_n';
+            })()
+        );
+        return img_data.data.publicUrl;
     }
 
     async uploadImage(file: File): Promise<Result> {
+        // 랜덤 생성 UUIDv4
         const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
             const r = (Math.random() * 16) | 0,
-                v = c === 'x' ? r : (r & 0x3) | 0x8;
+                v = c == 'x' ? r : (r & 0x3) | 0x8;
             return v.toString(16);
         });
 
@@ -334,25 +276,16 @@ class Supabase {
             };
         }
 
-        try {
-            const { data: img_data } = this.supabase.storage.from('images').getPublicUrl(data.path);
-            return {
-                success: true,
-                message: '성공적으로 업로드되었습니다.',
-                data: img_data.publicUrl
-            };
-        } catch (error) {
-            throw error;
-        }
+        return {
+            success: true,
+            message: '성공적으로 업로드되었습니다.',
+            data: this.supabase.storage.from('images').getPublicUrl(data.path).data.publicUrl
+        };
     }
 
     async getImage(image_path: string): Promise<string> {
-        try {
-            const { data: img_data } = this.supabase.storage.from('images').getPublicUrl(image_path);
-            return img_data.publicUrl;
-        } catch (error) {
-            throw error;
-        }
+        const img_data = this.supabase.storage.from('images').getPublicUrl(image_path);
+        return img_data.data.publicUrl;
     }
 }
 

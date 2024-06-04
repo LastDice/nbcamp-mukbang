@@ -1,4 +1,4 @@
-const EditReviewPage = () => {
+const EditPostPage = () => {
     return (
         <>
             {' '}
@@ -8,4 +8,4 @@ const EditReviewPage = () => {
     );
 };
 
-export default EditReviewPage;
+export default EditPostPage;
