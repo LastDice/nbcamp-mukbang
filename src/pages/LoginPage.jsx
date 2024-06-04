@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react';
 import Supabase, { SupabaseProviders } from '../_lib/Supabase.jsx';
 
 const supabase = new Supabase();
 
-const LoginPage = ({ signIn, setSignIn, updateSignIn, posts }) => {
+export default function LoginPage({ signIn, setSignIn, updateSignIn, posts }) {
     return (
         <div className="flex flex-col space-y-5 p-14">
             {signIn ? (
@@ -46,6 +45,4 @@ const LoginPage = ({ signIn, setSignIn, updateSignIn, posts }) => {
             </div>
         </div>
     );
-};
-
-export default LoginPage;
+}
