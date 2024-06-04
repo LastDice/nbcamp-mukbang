@@ -17,14 +17,25 @@ function App() {
     async function getPosts() {
         setPosts(await supabase.getPosts());
     }
-
+    
     async function updateSignIn() {
         setSignIn(await supabase.isSignIn());
     }
 
     useEffect(() => {
         updateSignIn();
-        getPosts();
+
+        const fetchPosts = async () => {
+            const { data, error } = await supabase.supabase.from('posts').select('*');
+
+            if (error) {
+                console.error('Error fetching posts:', error);
+            } else {
+                setPosts(data);
+            }
+        };
+
+        fetchPosts();
     }, []);
 
     return (
