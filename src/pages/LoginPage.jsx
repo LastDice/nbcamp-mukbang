@@ -46,3 +46,5 @@ const LoginPage = ({ signIn, setSignIn, updateSignIn, posts }) => {
         </div>
     );
 };
+
+export default LoginPage;

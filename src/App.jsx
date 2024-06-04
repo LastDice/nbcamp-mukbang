@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import Supabase, { SupabaseProviders } from './_lib/Supabase.jsx';
+import Supabase, { SupabaseProviders } from './_lib/Supabase.tsx';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import LoginPage from './pages/LoginPage.jsx';
 import MainPage from './pages/MainPage.jsx';
@@ -14,7 +14,6 @@ const supabase = new Supabase();
 function App() {
     const [posts, setPosts] = useState([]);
     const [signIn, setSignIn] = useState(false);
-    const [posts, setPosts] = useState([]);
 
     async function updateSignIn() {
         setSignIn(await supabase.isSignIn());

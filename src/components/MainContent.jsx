@@ -56,7 +56,7 @@ function MainContent() {
     useEffect(() => {
         // Supabase에서 데이터 가져오기
         const fetchData = async () => {
-            const { data, error } = await supabase.from('posts').select('id, title, content, rating, image_url');
+            const { data, error } = await supabase.from('posts').select('title, content');
 
             if (error) {
                 console.error('Error fetching data:', error);
