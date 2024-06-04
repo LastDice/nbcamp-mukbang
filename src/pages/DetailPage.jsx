@@ -117,7 +117,7 @@ export default function DetailPage() {
                             <div className="w-10 rounded-full">
                                 <img
                                     alt="Tailwind CSS Navbar component"
-                                    src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+                                    src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
                                 />
                             </div>
                         </div>
@@ -127,15 +127,15 @@ export default function DetailPage() {
                         >
                             <li>
                                 <a className="justify-between">
-                                    Profile
+                                    마이페이지
                                     <span className="badge">New</span>
                                 </a>
                             </li>
                             <li>
-                                <a>Settings</a>
+                                <a>프로필 수정</a>
                             </li>
                             <li>
-                                <a>Logout</a>
+                                <a>로그인</a>
                             </li>
                         </ul>
                     </div>
@@ -178,11 +178,10 @@ export default function DetailPage() {
                         <dialog id="my_modal_4" className="modal">
                             <div className="modal-box w-11/12 max-w-5xl">
                                 <form>
-                                    <textarea
+                                    <input
                                         type="text"
-                                        id="textForm"
                                         placeholder="내용을 입력해주세요!"
-                                        className="w-4/5 h-48 resize-none ml-10 mt-12"
+                                        className="w-4/5 h-48  ml-10 mt-12 text-base"
                                     />
                                     <div className="modal-action">
                                         <form method="dialog">
