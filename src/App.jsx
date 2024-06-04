@@ -39,7 +39,7 @@ function App() {
                 <Route path="/" element={<MainPage />}></Route>
                 <Route path="/detail/:id" element={<DetailPage />}></Route>
                 <Route path="/mypage" element={<MyPage />}></Route>
-                <Route path="/write/:id" element={<WriteReviewPage />}></Route>
+                <Route path="/write" element={<WriteReviewPage />}></Route>
                 <Route path="/edit/:id" element={<EditReviewPage />}></Route>
             </Routes>
         </BrowserRouter>
