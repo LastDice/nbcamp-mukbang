@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import Supabase, { SupabaseProviders } from '../_lib/Supabase.jsx';
+import Supabase, { SupabaseProviders } from '../_lib/Supabase.tsx';
 
 const supabase = new Supabase();
 
@@ -47,5 +46,3 @@ const LoginPage = ({ signIn, setSignIn, updateSignIn, posts }) => {
         </div>
     );
 };
-
-export default LoginPage;

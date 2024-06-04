@@ -7,16 +7,14 @@ import DetailPage from './pages/DetailPage.jsx';
 import MyPage from './pages/MyPage.jsx';
 import WriteReviewPage from './pages/WriteReviewPage.jsx';
 import EditReviewPage from './pages/EditReviewPage.jsx';
+import WritePage from './_example/WritePage.jsx';
 
 const supabase = new Supabase();
 
 function App() {
     const [posts, setPosts] = useState([]);
     const [signIn, setSignIn] = useState(false);
-
-    async function getPosts() {
-        setPosts(await supabase.getMainPosts());
-    }
+    const [posts, setPosts] = useState([]);
 
     async function updateSignIn() {
         setSignIn(await supabase.isSignIn());
@@ -24,7 +22,18 @@ function App() {
 
     useEffect(() => {
         updateSignIn();
-        getPosts();
+
+        const fetchPosts = async () => {
+            const { data, error } = await supabase.supabase.from('posts').select('*');
+
+            if (error) {
+                console.error('Error fetching posts:', error);
+            } else {
+                setPosts(data);
+            }
+        };
+
+        fetchPosts();
     }, []);
 
     return (
@@ -36,13 +45,14 @@ function App() {
                         <LoginPage signIn={signIn} setSignIn={setSignIn} updateSignIn={updateSignIn} posts={posts} />
                     }
                 ></Route>
-                <Route path="/" element={<MainPage />}></Route>
-                <Route path="/detail" element={<DetailPage />}></Route>
-                <Route path="/mypage" element={<MyPage />}></Route>
-                <Route path="/write" element={<WriteReviewPage />}></Route>
-                <Route path="/edit" element={<EditReviewPage />}></Route>
+                <Route path="/" element={<MainPage />} />
+                <Route path="/detail/:id" element={<DetailPage />} />
+                <Route path="/mypage" element={<MyPage />} />
+                <Route path="/write/:id" element={<WriteReviewPage />} />
+                <Route path="/edit/:id" element={<EditReviewPage />} />
             </Routes>
         </BrowserRouter>
+        // <WritePage />
     );
 }
 
