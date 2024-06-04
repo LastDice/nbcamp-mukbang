@@ -5,14 +5,18 @@ import LoginPage from './pages/LoginPage.jsx';
 import MainPage from './pages/MainPage.jsx';
 import DetailPage from './pages/DetailPage.jsx';
 import MyPage from './pages/MyPage.jsx';
-import WriteReviewPage from './pages/WriteReviewPage.jsx';
-import EditReviewPage from './pages/EditReviewPage.jsx';
-import WritePage from "./_example/WritePage.jsx";
+import WritePostPage from './pages/WritePostPage.jsx';
+import EditPostPage from './pages/EditPostPage.jsx';
 
 const supabase = new Supabase();
 
 function App() {
+    const [posts, setPosts] = useState([]);
     const [signIn, setSignIn] = useState(false);
+
+    async function getPosts() {
+        setPosts(await supabase.getPosts());
+    }
 
     async function updateSignIn() {
         setSignIn(await supabase.isSignIn());
@@ -20,6 +24,7 @@ function App() {
 
     useEffect(() => {
         updateSignIn();
+        getPosts();
     }, []);
 
     return (
@@ -34,8 +39,8 @@ function App() {
                 <Route path="/" element={<MainPage />}></Route>
                 <Route path="/detail" element={<DetailPage />}></Route>
                 <Route path="/mypage" element={<MyPage />}></Route>
-                <Route path="/write" element={<WriteReviewPage />}></Route>
-                <Route path="/edit" element={<EditReviewPage />}></Route>
+                <Route path="/write" element={<WritePostPage />}></Route>
+                <Route path="/edit" element={<EditPostPage />}></Route>
             </Routes>
         </BrowserRouter>
     );
