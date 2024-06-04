@@ -30,6 +30,22 @@ class Supabase {
         return !!session.data.session;
     }
 
+    async signInEmail(email: string, password: string) {
+        await this.supabase.auth.signInWithPassword({
+            email,
+            password
+        });
+        return this.isSignIn();
+    }
+
+    async registerEmail(email: string, password: string) {
+        await this.supabase.auth.signUp({
+            email,
+            password
+        });
+        return this.isSignIn();
+    }
+
     async signIn(provider: string) {
         await this.supabase.auth.signInWithOAuth({
             provider: provider as Provider,
