@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import MDEditor from '@uiw/react-md-editor';
 import Supabase from '../_lib/Supabase.tsx';
@@ -9,6 +10,8 @@ const supabase = new Supabase();
 const WritePostPage = () => {
     const [title, setTitle] = useState('');
     const [value, setValue] = useState('** 여기에 글을 작성해주세요 :> **');
+
+    const navigate = useNavigate();
 
     return (
         <>
@@ -61,11 +64,13 @@ const WritePostPage = () => {
                     className="btn btn-primary w-8/12 mt-10"
                     onClick={async () => {
                         const result = await supabase.writePosts(title, value);
-                        if (result.success) return alert('글 작성 성공');
-                        else return alert(`글 작성 실패: ${result.message}`);
+                        if (result.success) {
+                            alert('글 작성 성공');
+                            navigate('/mypage');
+                        } else return alert(`글 작성 실패: ${result.message}`);
                     }}
                 >
-                    저장
+                    글 작성 완료
                 </button>
 
                 <div className="pt-10">

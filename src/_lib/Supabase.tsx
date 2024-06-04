@@ -9,10 +9,19 @@ const SupabaseProviders = Object.freeze({
     Twitch: 'twitch'
 });
 
-type Result = {
+export type Result = {
     success: boolean;
     message: string;
     data?: string;
+};
+
+export type Post = {
+    post_id: string;
+    created_at: string;
+    author_uuid: string;
+    title: string;
+    content: string;
+    post_image?: string;
 };
 
 // noinspection JSUnusedGlobalSymbols
@@ -41,9 +50,26 @@ class Supabase {
         return await this.supabase.auth.signOut();
     }
 
-    async getPosts() {
+    async getPosts(): Promise<Post[]> {
         const { data } = await this.supabase.from('posts').select();
-        return data;
+
+        return data.reduce(
+            (
+                acc: Post[],
+                post: { id: string; created_at: string; author_uuid: string; title: string; content: string }
+            ) => {
+                const imgReg = /\[IMG](.+?)\[\/IMG]/g;
+                const imgPath = imgReg.exec(post.content);
+                acc.push({
+                    post_id: post.id,
+                    created_at: post.created_at,
+                    author_uuid: post.author_uuid,
+                    title: post.title,
+                    content: post.content,
+                    post_image: imgPath ? imgPath[1] : undefined
+                });
+            }
+        );
     }
 
     // [IMG=supabase]https://i.imgur.com/1Q6Q6Zz.png[/IMG]
@@ -56,8 +82,9 @@ class Supabase {
                 message: '로그인이 필요합니다.'
             };
         }
-
-        const result = await this.supabase.from('posts').insert([{ title, content }]);
+        const user_data = await this.supabase.auth.getUser();
+        const author_uuid = user_data.data.user.id;
+        const result = await this.supabase.from('posts').insert([{ title, content, author_uuid }]);
 
         if (result.error) {
             return {
@@ -284,10 +311,9 @@ class Supabase {
     }
 
     async getImage(image_path: string): Promise<string> {
-        const img_data = this.supabase.storage.from('images').getPublicUrl(image_path);
-        return img_data.data.publicUrl;
+        return this.supabase.storage.from('images').getPublicUrl(image_path).data.publicUrl;
     }
 }
 
 export default Supabase;
-export { SupabaseProviders, Result };
+export { SupabaseProviders };
