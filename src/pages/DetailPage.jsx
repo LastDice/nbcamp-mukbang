@@ -117,6 +117,22 @@ export default function DetailPage() {
         navigate('/');
     };
 
+    const naviateEditReviwPage = () => {
+        navigate('/edit/:id');
+    };
+
+    const handleMyPageClick = () => {
+        navigate('/mypage');
+    };
+
+    const handleProfileEditClick = () => {
+        navigate('/mypage');
+    };
+
+    const handleLoginClick = () => {
+        navigate('/login');
+    };
+
     const { id } = useParams();
     const [datas, setDatas] = useState(null);
 
@@ -137,14 +153,12 @@ export default function DetailPage() {
         return '';
     }
 
-    // const deleteDatas = async () => {
-    //     const { data, error } = await supabase.from('posts').delete().eq('post_id', id);
-    //     if (error) {
-    //         console.error('Error fetching data:', error);
-    //     } else {
-    //         setDatas(data[0]);
-    //     }
-    // };
+    const handleDeleteDatas = async () => {
+        const { error } = await supabase.from('posts').delete().eq('post_id', id);
+        if (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
 
     return (
         <Container>
@@ -172,16 +186,16 @@ export default function DetailPage() {
                             className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52"
                         >
                             <li>
-                                <a className="justify-between">
+                                <a className="justify-between" onClick={handleMyPageClick}>
                                     마이페이지
                                     <span className="badge">New</span>
                                 </a>
                             </li>
                             <li>
-                                <a>프로필 수정</a>
+                                <a onClick={handleProfileEditClick}>프로필 수정</a>
                             </li>
                             <li>
-                                <a>로그인</a>
+                                <a onClick={handleLoginClick}>로그인</a>
                             </li>
                         </ul>
                     </div>
@@ -194,11 +208,18 @@ export default function DetailPage() {
                     <p>{datas.title}</p>
                 </DetileTitle>
                 <BtnBox>
-                    <ToggleBtn className="btn btn-info">수정</ToggleBtn>
-                    <DeleteBtn className="btn btn-error">삭제</DeleteBtn>
+                    <ToggleBtn className="btn border-none " onClick={naviateEditReviwPage}>
+                        수정
+                    </ToggleBtn>
+                    <DeleteBtn className="btn border-none" onClick={handleDeleteDatas}>
+                        삭제
+                    </DeleteBtn>
                 </BtnBox>
                 <ContentBox>
-                    <MDEditor.Markdown source={datas.content} className="w-[900px] h-[950px]" />
+                    <MDEditor.Markdown
+                        source={datas.content}
+                        className="w-[900px] h-[950px] bg-transparent text-center"
+                    />
                 </ContentBox>
             </div>
 
