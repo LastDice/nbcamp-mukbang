@@ -1,16 +1,28 @@
+import React, { useState } from 'react';
+import Header from '../components/Header';
+import NavBar from '../components/NavBar';
+import MainContent from '../components/MainContent';
 import styled from 'styled-components';
 
-const MainHeader = styled.div`
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+const Main = styled.div`
+    /* width: 1500px; */
 `;
 
 function MainPage() {
-    return <MainHeader></MainHeader>;
+    const [searchWord, setSearchWord] = useState('');
+    const onSearchChange = (search) => {
+        setSearchWord(search);
+    };
+
+    return (
+        <>
+            <Main>
+                <Header searchWord={searchWord} onSearchChange={onSearchChange} />
+                <NavBar />
+                <MainContent searchWord={searchWord} />
+            </Main>
+        </>
+    );
 }
 
 export default MainPage;

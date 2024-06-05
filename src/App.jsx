@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import Supabase, { SupabaseProviders } from './_lib/Supabase.tsx';
+import Supabase from './_lib/Supabase.tsx';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import LoginPage from './pages/LoginPage.jsx';
 import MainPage from './pages/MainPage.jsx';
 import DetailPage from './pages/DetailPage.jsx';
 import MyPage from './pages/MyPage.jsx';
-import WriteReviewPage from './pages/WriteReviewPage.jsx';
-import EditReviewPage from './pages/EditReviewPage.jsx';
+import WritePostPage from './pages/WritePostPage.jsx';
+import EditPostPage from './pages/EditPostPage.jsx';
 
 const supabase = new Supabase();
 
@@ -15,7 +15,7 @@ function App() {
     const [signIn, setSignIn] = useState(false);
 
     async function getPosts() {
-        setPosts(await supabase.getMainPosts());
+        setPosts(await supabase.getPosts());
     }
 
     async function updateSignIn() {
@@ -24,7 +24,18 @@ function App() {
 
     useEffect(() => {
         updateSignIn();
-        getPosts();
+
+        const fetchPosts = async () => {
+            const { data, error } = await supabase.supabase.from('posts').select('*');
+
+            if (error) {
+                console.error('Error fetching posts:', error);
+            } else {
+                setPosts(data);
+            }
+        };
+
+        fetchPosts();
     }, []);
 
     return (
@@ -37,10 +48,10 @@ function App() {
                     }
                 ></Route>
                 <Route path="/" element={<MainPage />}></Route>
-                <Route path="/detail" element={<DetailPage />}></Route>
+                <Route path="/detail/:id" element={<DetailPage />}></Route>
                 <Route path="/mypage" element={<MyPage />}></Route>
-                <Route path="/write" element={<WriteReviewPage />}></Route>
-                <Route path="/edit" element={<EditReviewPage />}></Route>
+                <Route path="/write/:id" element={<WritePostPage />}></Route>
+                <Route path="/edit/:id" element={<EditPostPage />}></Route>
             </Routes>
         </BrowserRouter>
     );
