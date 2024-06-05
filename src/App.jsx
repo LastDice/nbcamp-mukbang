@@ -17,7 +17,7 @@ function App() {
     async function getPosts() {
         setPosts(await supabase.getPosts());
     }
-    
+
     async function updateSignIn() {
         setSignIn(await supabase.isSignIn());
     }

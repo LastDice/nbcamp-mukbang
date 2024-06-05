@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import Search from './Search.jsx';
 
 const HeaderWrapper = styled.div`
     display: flex;
@@ -14,7 +15,7 @@ const HeaderWrapper = styled.div`
     }
 `;
 
-function Header() {
+function Header({ searchWord, onSearchChange }) {
     const navigate = useNavigate();
 
     const handleMyPageClick = () => {
@@ -42,13 +43,7 @@ function Header() {
                     </a>
                 </div>
                 <div className="flex-none gap-2">
-                    <div className="form-control">
-                        <input
-                            type="text"
-                            placeholder="오늘의 먹방은?"
-                            className="input input-bordered w-24 md:w-auto"
-                        />
-                    </div>
+                    <Search searchWord={searchWord} onSearchChange={onSearchChange} />
                     <div className="dropdown dropdown-end">
                         <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
                             <div className="w-10 rounded-full">
