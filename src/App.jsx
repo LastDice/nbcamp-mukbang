@@ -48,10 +48,10 @@ function App() {
                     }
                 ></Route>
                 <Route path="/" element={<MainPage />}></Route>
-                <Route path="/detail" element={<DetailPage />}></Route>
+                <Route path="/detail/:id" element={<DetailPage />}></Route>
                 <Route path="/mypage" element={<MyPage />}></Route>
-                <Route path="/write" element={<WritePostPage />}></Route>
-                <Route path="/edit" element={<EditPostPage />}></Route>
+                <Route path="/write/:id" element={<WritePostPage />}></Route>
+                <Route path="/edit/:id" element={<EditPostPage />}></Route>
             </Routes>
         </BrowserRouter>
     );
