@@ -9,7 +9,7 @@ const supabase = new Supabase();
 
 const WritePostPage = () => {
     const [title, setTitle] = useState('');
-    const [value, setValue] = useState('** 여기에 글을 작성해주세요 :> **');
+    const [value, setValue] = useState('');
 
     const navigate = useNavigate();
 
@@ -17,7 +17,13 @@ const WritePostPage = () => {
         <>
             <Header />
             <WritePostContainer>
-                <input type="text" placeholder="제목" value={title} onChange={(e) => setTitle(e.target.value)} />
+                <input
+                    className="input input-ghost w-full text-4xl mb-10 text-center p-10"
+                    type="text"
+                    placeholder="제목"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                />
                 <input
                     id="image-input"
                     type="file"
@@ -31,10 +37,11 @@ const WritePostPage = () => {
                 />
 
                 <MDEditor
+                    style={{ padding: 10 }}
                     value={value}
                     onChange={setValue}
                     visibleDragbar={false}
-                    height={1000}
+                    height={500}
                     components={{
                         toolbar: (command) => {
                             if (command.keyCommand === 'image') {
@@ -74,7 +81,6 @@ const WritePostPage = () => {
                 </button>
 
                 <div className="pt-10">
-                    {/* 이 부분을 설정해서 보이게 해주시면 됩니다 :> */}
                     <MDEditor.Markdown source={value} style={{ whiteSpace: 'pre-wrap' }} />
                 </div>
             </WritePostContainer>

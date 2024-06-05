@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Header from '../components/Header';
 import NavBar from '../components/NavBar';
 import MainContent from '../components/MainContent';
@@ -9,12 +9,17 @@ const Main = styled.div`
 `;
 
 function MainPage() {
+    const [searchWord, setSearchWord] = useState('');
+    const onSearchChange = (search) => {
+        setSearchWord(search);
+    };
+
     return (
         <>
             <Main>
-                <Header />
+                <Header searchWord={searchWord} onSearchChange={onSearchChange} />
                 <NavBar />
-                <MainContent />
+                <MainContent searchWord={searchWord} />
             </Main>
         </>
     );

@@ -44,7 +44,7 @@ const supabase = createClient(
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9rem91bm52ZGVqdndlYW15enNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTcxMzU2MDYsImV4cCI6MjAzMjcxMTYwNn0.0gOgO3J5ybGbHANtLp9xe-QpmS-CL1EVxG1mcyBqHzw'
 );
 
-function MainContent() {
+function MainContent({ searchWord }) {
     const [cards, setCards] = useState([]);
 
     const navigate = useNavigate();
@@ -68,9 +68,15 @@ function MainContent() {
         fetchData();
     }, []);
 
+    const filteredCards = cards.filter(
+        (card) =>
+            card.title.toLowerCase().includes(searchWord.toLowerCase()) ||
+            card.content.toLowerCase().includes(searchWord.toLowerCase())
+    );
+
     return (
         <ContentWrapper>
-            {cards.map((card) => (
+            {filteredCards.map((card) => (
                 <div
                     key={card.id}
                     className="card card-compact w-80 bg-base-100 shadow-xl"
