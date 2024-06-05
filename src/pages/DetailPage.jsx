@@ -1,23 +1,13 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { createClient } from '@supabase/supabase-js';
+import MDEditor from '@uiw/react-md-editor';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 const Container = styled.div`
     max-width: 1440px;
-    min-height: 2000px;
+    min-height: 2500px;
     margin: 0 auto;
-`;
-
-const ImgBox = styled.div`
-    width: 1000px;
-    height: 400px;
-    background-color: aqua;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
-    margin-top: 20px;
 `;
 
 const DetileTitle = styled.div`
@@ -50,14 +40,23 @@ const DeleteBtn = styled.button`
 
 const ContentBox = styled.div`
     width: 1000px;
-    height: 500px;
+    height: 950px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     margin: 0 auto;
     margin-top: 30px;
-    background-color: aquamarine;
+`;
+
+const MainImgBox = styled.div`
+    width: 1000px;
+    height: 400px;
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+    margin-top: 50px;
+    background-color: aqua;
 `;
 
 const ReviwTitleBox = styled.div`
@@ -75,15 +74,41 @@ const ReviwTitle = styled.div`
     font-size: 40px;
 `;
 
-const ReviwComment = styled.div`
-    background-color: aliceblue;
+const ReviwBox = styled.div`
     width: 1000px;
-    height: 650px;
-    display: flex;
-    justify-content: center;
+    height: 200px;
     margin: 0 auto;
-    margin-top: 50px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid;
 `;
+
+const ReviwProfile = styled.div`
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-left: 20px;
+`;
+
+const ReviwComment = styled.div`
+    width: 600px;
+    height: 200px;
+`;
+
+const ReviwText = styled.p`
+    width: 600px;
+    height: 180px;
+    resize: none;
+    display: flex;
+    align-items: center;
+`;
+
+const supabase = createClient(
+    'https://okzounnvdejvweamyzsd.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9rem91bm52ZGVqdndlYW15enNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTcxMzU2MDYsImV4cCI6MjAzMjcxMTYwNn0.0gOgO3J5ybGbHANtLp9xe-QpmS-CL1EVxG1mcyBqHzw'
+);
 
 export default function DetailPage() {
     const navigate = useNavigate();
@@ -92,12 +117,41 @@ export default function DetailPage() {
         navigate('/');
     };
 
+    const { id } = useParams();
+    const [datas, setDatas] = useState(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const { data, error } = await supabase.from('posts').select('title, content').eq('post_id', id);
+
+            if (error) {
+                console.error('Error fetching data:', error);
+            } else {
+                setDatas(data[0]);
+            }
+        };
+
+        fetchData();
+    }, []);
+    if (!datas) {
+        return '';
+    }
+
+    // const deleteDatas = async () => {
+    //     const { data, error } = await supabase.from('posts').delete().eq('post_id', id);
+    //     if (error) {
+    //         console.error('Error fetching data:', error);
+    //     } else {
+    //         setDatas(data[0]);
+    //     }
+    // };
+
     return (
         <Container>
             <div className="navbar bg-base-100">
                 <div className="flex-1">
                     <a className="btn btn-ghost text-xl" onClick={navigateMainPage}>
-                        daisyUI
+                        MuckBang
                     </a>
                 </div>
                 <div className="flex-none gap-2">
@@ -109,7 +163,7 @@ export default function DetailPage() {
                             <div className="w-10 rounded-full">
                                 <img
                                     alt="Tailwind CSS Navbar component"
-                                    src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+                                    src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
                                 />
                             </div>
                         </div>
@@ -119,45 +173,81 @@ export default function DetailPage() {
                         >
                             <li>
                                 <a className="justify-between">
-                                    Profile
+                                    마이페이지
                                     <span className="badge">New</span>
                                 </a>
                             </li>
                             <li>
-                                <a>Settings</a>
+                                <a>프로필 수정</a>
                             </li>
                             <li>
-                                <a>Logout</a>
+                                <a>로그인</a>
                             </li>
                         </ul>
                     </div>
                 </div>
             </div>
-            <DetileTitle>
-                <p>서울의 맛집입니다.</p>
-            </DetileTitle>
-            <BtnBox>
-                <ToggleBtn className="btn btn-info">수정</ToggleBtn>
-                <DeleteBtn className="btn btn-error">삭제</DeleteBtn>
-            </BtnBox>
-            <ImgBox>이미지 박스</ImgBox>
-            <ContentBox>내용이 들어갈 박스</ContentBox>
+
+            <div>
+                <MainImgBox />
+                <DetileTitle>
+                    <p>{datas.title}</p>
+                </DetileTitle>
+                <BtnBox>
+                    <ToggleBtn className="btn btn-info">수정</ToggleBtn>
+                    <DeleteBtn className="btn btn-error">삭제</DeleteBtn>
+                </BtnBox>
+                <ContentBox>
+                    <MDEditor.Markdown source={datas.content} className="w-[900px] h-[950px]" />
+                </ContentBox>
+            </div>
+
             <ReviwTitleBox>
                 <ReviwTitle>
-                    <h3>
-                        Review{' '}
+                    <h3 className="mt-2 ml-4">
+                        댓글{' '}
                         <button
-                            className="text-sm "
-                            onClick={() => {
-                                navigate(`/write`);
-                            }}
+                            className="btn float-end mt-2 mr-5"
+                            onClick={() => document.getElementById('my_modal_4').showModal()}
                         >
-                            리뷰 쓰기
+                            댓글 쓰기
                         </button>
+                        <dialog id="my_modal_4" className="modal">
+                            <div className="modal-box w-11/12 max-w-5xl">
+                                <form>
+                                    <input
+                                        type="text"
+                                        placeholder="내용을 입력해주세요!"
+                                        className="w-4/5 h-48  ml-10 mt-12 text-base"
+                                    />
+                                    <div className="modal-action">
+                                        <form method="dialog">
+                                            <button className="btn mr-4">등록</button>
+                                            <button className="btn">닫기</button>
+                                        </form>
+                                    </div>
+                                </form>
+                            </div>
+                        </dialog>
                     </h3>
                 </ReviwTitle>
             </ReviwTitleBox>
-            <ReviwComment>리뷰 추가되는 박스</ReviwComment>
+            <ReviwBox>
+                <ReviwProfile>
+                    <div className="avatar">
+                        <div className="w-24 rounded-full">
+                            <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+                        </div>
+                    </div>
+                    <span>홍길순</span>
+                </ReviwProfile>
+                <ReviwComment>
+                    <ReviwText>
+                        저는 경기도 쪽에 살아서 부산에 갈 일이 없지만 맛집이라면 얘기가 다르죠! 언젠가는 꼭 먹으러
+                        가겠습니다 ㅎㅎ
+                    </ReviwText>
+                </ReviwComment>
+            </ReviwBox>
         </Container>
     );
 }

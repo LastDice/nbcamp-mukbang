@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import Search from './Search.jsx';
 
 const HeaderWrapper = styled.div`
     display: flex;
@@ -14,15 +15,10 @@ const HeaderWrapper = styled.div`
     }
 `;
 
-function Header({ onSearch }) {
+function Header({ searchWord, onSearchChange }) {
     const navigate = useNavigate();
-    const [searchTerm, setSearchTerm] = useState('');
 
     const handleMyPageClick = () => {
-        navigate('/mypage');
-    };
-
-    const handleProfileEditClick = () => {
         navigate('/mypage');
     };
 
@@ -34,15 +30,6 @@ function Header({ onSearch }) {
         navigate('/');
     };
 
-    const handleSearchChange = (e) => {
-        setSearchTerm(e.target.value);
-    };
-
-    const handleSearchSubmit = (e) => {
-        e.preventDefault();
-        onSearch(searchTerm);
-    };
-
     return (
         <HeaderWrapper>
             <div className="navbar bg-base-100 shadow">
@@ -52,17 +39,7 @@ function Header({ onSearch }) {
                     </a>
                 </div>
                 <div className="flex-none gap-2">
-                    <form onSubmit={handleSearchSubmit}>
-                        <div className="form-control">
-                            <input
-                                type="text"
-                                placeholder="오늘의 먹방은?"
-                                className="input input-bordered w-24 md:w-auto"
-                                value={searchTerm}
-                                onChange={handleSearchChange}
-                            />
-                        </div>
-                    </form>
+                    <Search searchWord={searchWord} onSearchChange={onSearchChange} />
                     <div className="dropdown dropdown-end">
                         <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
                             <div className="w-10 rounded-full">
