@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 
@@ -16,11 +16,17 @@ const NavBarWrapper = styled.div`
     }
 `;
 
-function NavBar() {
+function NavBar({ onSortChange }) {
     const navigate = useNavigate();
+    const [selectedSort, setSelectedSort] = useState('latest');
 
     const handleCreateClick = () => {
         navigate('/write');
+    };
+
+    const handleSortClick = (sort) => {
+        setSelectedSort(sort);
+        onSortChange(sort);
     };
 
     return (
@@ -31,10 +37,10 @@ function NavBar() {
                 </div>
                 <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
                     <li>
-                        <a>최신순</a>
+                        <a onClick={() => handleSortClick('latest')}>최신순</a>
                     </li>
                     <li>
-                        <a>찜 많은순</a>
+                        <a onClick={() => handleSortClick('likes')}>찜 많은순</a>
                     </li>
                 </ul>
             </div>

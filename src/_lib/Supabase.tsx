@@ -26,10 +26,6 @@ class Supabase {
         );
     }
 
-    from(table: string) {
-        return this.supabase.from(table);
-    }
-
     async isSignIn() {
         const session = await this.supabase.auth.getSession();
         return session.data.session !== null;

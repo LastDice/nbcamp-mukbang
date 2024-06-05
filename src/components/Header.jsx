@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,8 +14,9 @@ const HeaderWrapper = styled.div`
     }
 `;
 
-function Header() {
+function Header({ onSearch }) {
     const navigate = useNavigate();
+    const [searchTerm, setSearchTerm] = useState('');
 
     const handleMyPageClick = () => {
         navigate('/mypage');
@@ -33,6 +34,15 @@ function Header() {
         navigate('/');
     };
 
+    const handleSearchChange = (e) => {
+        setSearchTerm(e.target.value);
+    };
+
+    const handleSearchSubmit = (e) => {
+        e.preventDefault();
+        onSearch(searchTerm);
+    };
+
     return (
         <HeaderWrapper>
             <div className="navbar bg-base-100 shadow">
@@ -42,13 +52,17 @@ function Header() {
                     </a>
                 </div>
                 <div className="flex-none gap-2">
-                    <div className="form-control">
-                        <input
-                            type="text"
-                            placeholder="오늘의 먹방은?"
-                            className="input input-bordered w-24 md:w-auto"
-                        />
-                    </div>
+                    <form onSubmit={handleSearchSubmit}>
+                        <div className="form-control">
+                            <input
+                                type="text"
+                                placeholder="오늘의 먹방은?"
+                                className="input input-bordered w-24 md:w-auto"
+                                value={searchTerm}
+                                onChange={handleSearchChange}
+                            />
+                        </div>
+                    </form>
                     <div className="dropdown dropdown-end">
                         <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
                             <div className="w-10 rounded-full">
@@ -67,9 +81,6 @@ function Header() {
                                     마이페이지
                                     <span className="badge">New</span>
                                 </a>
-                            </li>
-                            <li>
-                                <a onClick={handleProfileEditClick}>프로필 수정</a>
                             </li>
                             <li>
                                 <a onClick={handleLoginClick}>로그인</a>
