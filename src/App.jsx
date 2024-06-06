@@ -6,7 +6,7 @@ import MainPage from './pages/MainPage.jsx';
 import DetailPage from './pages/DetailPage.jsx';
 import MyPage from './pages/MyPage.jsx';
 import WritePostPage from './pages/WritePostPage.jsx';
-import EditPostPage from './pages/EditPostPage.jsx';
+import UpdatePostPage from './pages/UpdatePostPage.jsx';
 
 function App() {
     const [posts, setPosts] = useState([]);
@@ -48,8 +48,8 @@ function App() {
                 <Route path="/" element={<MainPage />}></Route>
                 <Route path="/detail/:id" element={<DetailPage />}></Route>
                 <Route path="/mypage" element={<MyPage />}></Route>
-                <Route path="/write/:id" element={<WritePostPage />}></Route>
-                <Route path="/edit/:id" element={<EditPostPage />}></Route>
+                <Route path="/write" element={<WritePostPage />}></Route>
+                <Route path="/update/:id" element={<UpdatePostPage />}></Route>
             </Routes>
         </BrowserRouter>
     );

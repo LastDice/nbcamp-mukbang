@@ -57,8 +57,6 @@ export default function WritePage() {
                 <MDEditor.Markdown source={value} style={{ whiteSpace: 'pre-wrap' }} />
             </div>
         </div>
-<<<<<<< HEAD
-=======
         // <>
         //     {' '}
         //     <div>헤더</div>
@@ -124,6 +122,5 @@ export default function WritePage() {
         //         </form>
         //     </WriteReviewContainer>
         // </>
->>>>>>> 2cc4c156dab18368b07b9d9cc087d2ee8468be44
     );
 }
