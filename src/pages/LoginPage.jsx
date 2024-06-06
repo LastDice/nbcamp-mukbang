@@ -1,6 +1,4 @@
-import Supabase, { SupabaseProviders } from '../_lib/Supabase.tsx';
-
-const supabase = new Supabase();
+import supabase, { SupabaseProviders } from '../_lib/Supabase.tsx';
 
 export default function LoginPage({ signIn, setSignIn, updateSignIn, posts }) {
     return (

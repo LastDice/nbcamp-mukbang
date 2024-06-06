@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Supabase from '../_lib/Supabase';
-
-const supabase = new Supabase();
+import supabase from '../_lib/Supabase';
 
 function MyPageModal({ isVisible, onClose, onSave, currentImage, currentNickname, currentDescription, updateProfile }) {
     const defaultImageUrl =
@@ -46,16 +44,23 @@ function MyPageModal({ isVisible, onClose, onSave, currentImage, currentNickname
         let finalImageUrl = imageUrl;
 
         try {
+            // storage저장하는 로직
             if (file) {
+                console.log(file);
                 const { success, message, data } = await supabase.setProfileImg(file);
                 if (success) {
                     finalImageUrl = data;
                 } else {
                     throw new Error(message);
                 }
+                console.log('MyPageModal =>', data);
             }
 
-            // 사용자 정보 업데이트
+            // 사용자 정보 업데이트 => user 테이블 필요.
+
+            // 회원가입할 때 auth session에 있는 id를 user테이블의 프라이머리키 id로  자동으로 생성되도록.
+
+            // id로 접근해서 데이터를 update가능.
             const { success: updateSuccess, message: updateMessage } = await updateProfile(
                 nickname,
                 description,
@@ -68,7 +73,7 @@ function MyPageModal({ isVisible, onClose, onSave, currentImage, currentNickname
                 throw new Error(updateMessage);
             }
         } catch (error) {
-            console.error('Error saving profile:', error.message);
+            console.error('Error saving profile:', error);
         }
     };
 
