@@ -88,7 +88,7 @@ const ReviwProfile = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 40px;
     margin-left: 20px;
 `;
 
@@ -100,9 +100,9 @@ const ReviwComment = styled.div`
 const ReviwText = styled.p`
     width: 600px;
     height: 180px;
-    resize: none;
     display: flex;
     align-items: center;
+    list-style-type: none;
 `;
 
 const supabase = createClient(
@@ -131,6 +131,21 @@ export default function DetailPage() {
 
     const handleLoginClick = () => {
         navigate('/login');
+    };
+
+    const [comments, setComments] = useState([]);
+    const [newComment, setNewComment] = useState('');
+
+    const handleCommentChange = (e) => {
+        setNewComment(e.target.value);
+    };
+
+    const handleSubmitComment = (e) => {
+        e.preventDefault();
+        if (newComment.trim() !== '') {
+            setComments([...comments, newComment]);
+            setNewComment('');
+        }
     };
 
     const { id } = useParams();
@@ -225,17 +240,18 @@ export default function DetailPage() {
                         </button>
                         <dialog id="my_modal_4" className="modal">
                             <div className="modal-box w-11/12 max-w-5xl">
-                                <form>
-                                    <input
+                                <form onSubmit={handleSubmitComment}>
+                                    <textarea
                                         type="text"
                                         placeholder="내용을 입력해주세요!"
-                                        className="w-4/5 h-48  ml-10 mt-12 text-base"
+                                        className="w-4/5 h-48  ml-10 mt-12 text-base resize-none"
+                                        value={newComment}
+                                        onChange={handleCommentChange}
                                     />
                                     <div className="modal-action">
-                                        <form method="dialog">
-                                            <button className="btn mr-4">등록</button>
-                                            <button className="btn">닫기</button>
-                                        </form>
+                                        <button className="btn mr-4" type="submit">
+                                            등록
+                                        </button>
                                     </div>
                                 </form>
                             </div>
@@ -245,17 +261,21 @@ export default function DetailPage() {
             </ReviwTitleBox>
             <ReviwBox>
                 <ReviwProfile>
-                    <div className="avatar">
-                        <div className="w-24 rounded-full">
-                            <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+                    <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar w-[80px]">
+                        <div className="w-[80px] rounded-full">
+                            <img
+                                alt="Tailwind CSS Navbar component"
+                                src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+                            />
                         </div>
                     </div>
                     <span>홍길순</span>
                 </ReviwProfile>
                 <ReviwComment>
                     <ReviwText>
-                        저는 경기도 쪽에 살아서 부산에 갈 일이 없지만 맛집이라면 얘기가 다르죠! 언젠가는 꼭 먹으러
-                        가겠습니다 ㅎㅎ
+                        {comments.map((comment, index) => (
+                            <div key={index}>{comment}</div>
+                        ))}
                     </ReviwText>
                 </ReviwComment>
             </ReviwBox>
