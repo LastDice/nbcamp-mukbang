@@ -133,20 +133,20 @@ export default function DetailPage() {
         navigate('/login');
     };
 
-    const [comments, setComments] = useState([]);
-    const [newComment, setNewComment] = useState('');
+    // const [comments, setComments] = useState([]);
+    // const [newComment, setNewComment] = useState('');
 
-    const handleCommentChange = (e) => {
-        setNewComment(e.target.value);
-    };
+    // const handleCommentChange = (e) => {
+    //     setNewComment(e.target.value);
+    // };
 
-    const handleSubmitComment = (e) => {
-        e.preventDefault();
-        if (newComment.trim() !== '') {
-            setComments([...comments, newComment]);
-            setNewComment('');
-        }
-    };
+    // const handleSubmitComment = (e) => {
+    //     e.preventDefault();
+    //     if (newComment.trim() !== '') {
+    //         setComments([...comments, newComment]);
+    //         setNewComment('');
+    //     }
+    // };
 
     const { id } = useParams();
     const [datas, setDatas] = useState(null);
@@ -240,18 +240,21 @@ export default function DetailPage() {
                         </button>
                         <dialog id="my_modal_4" className="modal">
                             <div className="modal-box w-11/12 max-w-5xl">
-                                <form onSubmit={handleSubmitComment}>
+                                <form>
                                     <textarea
                                         type="text"
                                         placeholder="내용을 입력해주세요!"
                                         className="w-4/5 h-48  ml-10 mt-12 text-base resize-none"
-                                        value={newComment}
-                                        onChange={handleCommentChange}
+                                        // value={newComment}
+                                        // onChange={handleCommentChange}
                                     />
                                     <div className="modal-action">
-                                        <button className="btn mr-4" type="submit">
-                                            등록
-                                        </button>
+                                        <form method="dialog" className="mb-2">
+                                            <button className="btn mr-4" type="submit">
+                                                등록
+                                            </button>
+                                            <button className="btn">Close</button>
+                                        </form>
                                     </div>
                                 </form>
                             </div>
@@ -273,9 +276,10 @@ export default function DetailPage() {
                 </ReviwProfile>
                 <ReviwComment>
                     <ReviwText>
-                        {comments.map((comment, index) => (
+                        {/* {comments.map((comment, index) => (
                             <div key={index}>{comment}</div>
-                        ))}
+                        ))} */}
+                        저는 경기도에 살아서 부산 갈 일이 없지만, 꼭 한 번 가서 먹으러 가겠습니다!!
                     </ReviwText>
                 </ReviwComment>
             </ReviwBox>
