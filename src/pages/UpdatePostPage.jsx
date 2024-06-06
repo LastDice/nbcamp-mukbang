@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import MDEditor from '@uiw/react-md-editor';
-import Supabase from '../_lib/Supabase.tsx';
+import Supabase from '../_lib/Supabase.js';
 import { createClient } from '@supabase/supabase-js';
 import Header from '../components/Header.jsx';
 

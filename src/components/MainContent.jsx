@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import supabase from '../_lib/Supabase';
+import { createClient } from '@supabase/supabase-js';
 
 const ContentWrapper = styled.div`
     display: flex;
@@ -38,6 +38,11 @@ const ContentWrapper = styled.div`
         text-overflow: ellipsis;
     }
 `;
+
+const supabase = createClient(
+    'https://okzounnvdejvweamyzsd.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9rem91bm52ZGVqdndlYW15enNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTcxMzU2MDYsImV4cCI6MjAzMjcxMTYwNn0.0gOgO3J5ybGbHANtLp9xe-QpmS-CL1EVxG1mcyBqHzw'
+);
 
 function MainContent({ searchWord }) {
     const [cards, setCards] = useState([]);

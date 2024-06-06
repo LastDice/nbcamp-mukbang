@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import MDEditor from '@uiw/react-md-editor';
-import supabase from '../_lib/Supabase.tsx';
+import supabase from '../_lib/Supabase.js';
 import Header from '../components/Header.jsx';
 
 const WritePostPage = () => {
