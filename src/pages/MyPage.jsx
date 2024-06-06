@@ -6,7 +6,7 @@ import Header from '../components/Header';
 export default function MyPage() {
     const [showModal, setShowModal] = useState(false);
     const [profileImage, setProfileImage] = useState(
-        'https://play-lh.googleusercontent.com/38AGKCqmbjZ9OuWx4YjssAz3Y0DTWbiM5HB0ove1pNBq_o9mtWfGszjZNxZdwt_vgHo'
+        'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'
     );
     const [nickname, setNickname] = useState('');
     const [description, setDescription] = useState('');
@@ -99,9 +99,7 @@ export default function MyPage() {
         <>
             <Header searchWord={searchWord} onSearchChange={onSearchChange} />
 
-            <div className="container mx-auto py-40 px-30 flex gap-20">
-                {' '}
-                {/* ml-auto를 mx-auto로 변경 */}
+            <div className="container mx-auto py-40 px-30 flex gap-20 justify-center">
                 <div className="relative">
                     <div className="rounded-full overflow-hidden object-contain h-48 w-48">
                         <img src={profileImage} alt="Profile" />
@@ -114,7 +112,6 @@ export default function MyPage() {
                         <button className="p-2 ring-1 ring-gray-400 rounded-full" onClick={() => setShowModal(true)}>
                             프로필 수정
                         </button>
-                        <button className="p-2 ring-1 ring-gray-400 rounded-full">비밀번호 변경</button>
                     </div>
                 </div>
             </div>
@@ -148,8 +145,6 @@ export default function MyPage() {
                     </div>
                 ))}
             </div>
-
-            <div>푸더</div>
 
             <MyPageModal
                 isVisible={showModal}
