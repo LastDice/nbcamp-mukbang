@@ -1,7 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import MyPageModal from '../components/MyPageModal';
-import supabase from '../_lib/Supabase';
 import Header from '../components/Header';
+import { createClient } from '@supabase/supabase-js';
+import { useNavigate } from 'react-router-dom';
+
+const supabase = createClient(
+    'https://okzounnvdejvweamyzsd.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9rem91bm52ZGVqdndlYW15enNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTcxMzU2MDYsImV4cCI6MjAzMjcxMTYwNn0.0gOgO3J5ybGbHANtLp9xe-QpmS-CL1EVxG1mcyBqHzw'
+);
+
+const extractImageUrl = (content) => {
+    const imageUrlMatch = content.match(/!\[.*?\]\((.*?)\)/);
+    return imageUrlMatch ? imageUrlMatch[1] : '../public/img/mukbang.png';
+};
 
 export default function MyPage() {
     const [showModal, setShowModal] = useState(false);
@@ -13,7 +24,11 @@ export default function MyPage() {
     const [cards, setCards] = useState([]);
     const [searchWord, setSearchWord] = useState('');
 
-    // Supabase 객체 초기화
+    const navigate = useNavigate();
+
+    const handleCreateClick = (id) => {
+        navigate(`/detail/${id}`);
+    };
 
     const handleSaveChanges = (image, nick, desc) => {
         setProfileImage(image);
@@ -21,69 +36,66 @@ export default function MyPage() {
         setDescription(desc);
     };
 
-    // updateProfile 함수 정의
-    const updateProfile = async (nickname, description, imageUrl) => {
-        console.log(nickname, description, imageUrl);
+    const updateProfile = async (nickname, description, avatarurl) => {
         try {
-            // Supabase 객체 초기화 확인
             if (!supabase) {
                 console.error('Supabase is not initialized');
                 return { success: false, message: 'Supabase is not initialized' };
             }
 
-            // 사용자 인증 확인
-            const { data: sessionData, error: sessionError } = await supabase.getSession();
+            const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
             if (sessionError) {
                 console.error('User is not authenticated');
                 return { success: false, message: 'User is not authenticated' };
             }
-            console.log(sessionData);
-            // 여기에 프로필 업데이트 로직 추가
-            const user = await supabase.getSession();
-            console.log('getSession user data ==> ', user);
-            const { error } = await supabase.updateUser(nickname, description, imageUrl, user.session.user);
-            // .from('profiles')
-            // .update({
-            //     global_name: nickname,
-            //     bio: description,
-            //     avatarurl: imageUrl
-            // })
-            // .eq('id', user.id);
+
+            const userId = sessionData.user;
+            const { error } = await supabase
+                .from('profiles')
+                .update({ nickname: nickname, description: description, avatarurl: avatarurl })
+                .eq('id', userId);
 
             if (error) {
                 console.error('Error updating profile:', error);
-                return { success: false, message: error };
+                return { success: false, message: error.message };
             } else {
                 return { success: true, message: 'Profile updated successfully' };
             }
         } catch (error) {
             console.error('Error updating profile:', error);
-            return { success: false, message: error };
+            return { success: false, message: error.message };
         }
     };
 
     useEffect(() => {
-        // Supabase에서 데이터 가져오기
         const fetchData = async () => {
-            // 현재 로그인한 사용자의 정보 가져오기
-            const sessionData = await supabase.getSession();
+            try {
+                // 게시물 데이터 가져오기
+                const { data: postData, error: postError } = await supabase
+                    .from('posts')
+                    .select('post_id, title, content, author_uuid');
 
-            const userName = sessionData.session.user.user_metadata.full_name;
-            console.log('userName ==>', userName);
-
-            setNickname(userName);
-
-            if (sessionData.session) {
-                // 현재 사용자의 ID로 작성한 리뷰 가져오기
-                const { data, error } = await supabase.getPostsByUserId(sessionData.session.user.id);
-
-                if (error) {
-                    console.error('Error fetching data:', error);
+                if (postError) {
+                    console.error('Error fetching data:', postError);
                 } else {
-                    setCards(data);
+                    // 현재 사용자 정보 가져오기
+                    const { data: userData, error: userError } = await supabase.from('profiles').select('id').single();
+
+                    if (userError) {
+                        console.error('Error fetching user data:', userError);
+                    } else {
+                        // 현재 사용자의 프로필 ID 가져오기
+                        const userProfileId = userData.id;
+
+                        // 사용자의 프로필 ID를 사용하여 게시물 필터링
+                        const userPosts = postData.filter((post) => post.author_uuid === userProfileId);
+
+                        // 필터링된 게시물을 상태로 설정
+                        setCards(userPosts);
+                    }
                 }
-            } else {
-                console.error('User is not authenticated');
+            } catch (error) {
+                console.error('Error fetching data:', error);
             }
         };
 
@@ -92,14 +104,20 @@ export default function MyPage() {
 
     const onSearchChange = (e) => {
         setSearchWord(e.target.value);
-        // You can add additional logic here if needed
+        // 추가적인 로직을 여기서 구현할 수 있습니다
     };
+
+    const filteredCards = cards.filter(
+        (card) =>
+            card.title.toLowerCase().includes(searchWord.toLowerCase()) ||
+            card.content.toLowerCase().includes(searchWord.toLowerCase())
+    );
 
     return (
         <>
             <Header searchWord={searchWord} onSearchChange={onSearchChange} />
 
-            <div className="container mx-auto py-40 px-30 flex gap-20 justify-center">
+            <div className="container mx-auto py-20 px-30 flex gap-20 justify-center">
                 <div className="relative">
                     <div className="rounded-full overflow-hidden object-contain h-48 w-48">
                         <img src={profileImage} alt="Profile" />
@@ -116,34 +134,36 @@ export default function MyPage() {
                 </div>
             </div>
 
-            {/* 내가 쓴 리뷰 */}
-            <div>
-                <div className="container mx-auto">
-                    <h1 className="text-3xl font-medium">내가 작성한 리뷰</h1>
-                </div>
+            <div className="container mx-auto">
+                <h1 className="text-3xl font-medium ms-20">내 리뷰</h1>
             </div>
             <div className="px-20 py-5 flex flex-col gap-5">
-                {cards.map((posts) => (
-                    <div
-                        key={posts.id}
-                        className="w-full border-t border-b border-gray-300 py-5 flex flex-col md:flex-row gap-3"
-                    >
-                        <div className="md:w-1/3">
-                            <img
-                                src={posts.image_url}
-                                alt={posts.title}
-                                className="w-full h-auto object-cover rounded-lg"
-                            />
+                {filteredCards.map((card) => {
+                    const imageUrl = extractImageUrl(card.content);
+                    // content가 100단어를 넘어가면 ...으로 줄여서 표시
+                    const truncatedContent = card.content.split(' ').slice(0, 100).join(' ');
+                    const displayContent =
+                        card.content.split(' ').length > 100 ? truncatedContent + ' ...' : card.content;
+                    return (
+                        <div
+                            key={card.post_id}
+                            className="card card-compact border-t border-b border-bg-base-700 shadow py-5 flex flex-col md:flex-row gap-3"
+                            onClick={() => handleCreateClick(card.post_id)}
+                        >
+                            <figure className="food-photo object-cover h-48 w-96">
+                                {imageUrl ? (
+                                    <img src={imageUrl} alt="food" className="object-cover h-48 w-96" />
+                                ) : (
+                                    <div>No Image Available</div>
+                                )}
+                            </figure>
+                            <div className="card-body h-48 w-96">
+                                <h2 className="card-title">{card.title}</h2>
+                                <p className="resize-x rounded-md">{displayContent}</p>
+                            </div>
                         </div>
-                        <div className="md:w-2/3 flex flex-col justify-center">
-                            <h1 className="font-medium text-lg">{posts.title}</h1>
-                            <p className="text-gray-400">{posts.content}</p>
-                            <a className="text-indigo-600 font-semibold text-sm" href="">
-                                더보기
-                            </a>
-                        </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
 
             <MyPageModal
@@ -153,7 +173,7 @@ export default function MyPage() {
                 currentImage={profileImage}
                 currentNickname={nickname}
                 currentDescription={description}
-                updateProfile={updateProfile} // updateProfile 함수 전달
+                updateProfile={updateProfile}
             />
         </>
     );
