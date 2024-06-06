@@ -38,6 +38,7 @@ class Supabase {
             .update({
                 nickname: nickname,
                 description: description
+                // imageUrl: imageUrl
             })
             .eq('id', user.id);
 

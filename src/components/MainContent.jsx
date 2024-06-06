@@ -68,6 +68,11 @@ function MainContent({ searchWord }) {
         fetchData();
     }, []);
 
+    const extractImageUrl = (content) => {
+        const imageUrlMatch = content.match(/!\[.*?\]\((.*?)\)/);
+        return imageUrlMatch ? imageUrlMatch[1] : '../public/img/mukbang.png';
+    };
+
     const filteredCards = cards.filter(
         (card) =>
             card.title.toLowerCase().includes(searchWord.toLowerCase()) ||
@@ -76,23 +81,24 @@ function MainContent({ searchWord }) {
 
     return (
         <ContentWrapper>
-            {filteredCards.map((card) => (
-                <div
-                    key={card.id}
-                    className="card card-compact w-80 bg-base-100 shadow-xl"
-                    onClick={() => handleCreateClick(card.post_id)}
-                >
-                    <figure className="food-photo">
-                        <img src={card.image_url} alt="food" />
-                    </figure>
-                    <div className="card-body">
-                        <h2 className="card-title">{card.title}</h2>
-                        <h2 className="card-rating">{card.rating}</h2>
-                        <p>{card.content}</p>
-                        {/* ... */}
+            {filteredCards.map((card) => {
+                const imageUrl = extractImageUrl(card.content);
+                return (
+                    <div
+                        key={card.post_id}
+                        className="card card-compact w-80 bg-base-100 shadow-xl"
+                        onClick={() => handleCreateClick(card.post_id)}
+                    >
+                        <figure className="food-photo">
+                            {imageUrl ? <img src={imageUrl} alt="food" /> : <div>No Image Available</div>}
+                        </figure>
+                        <div className="card-body">
+                            <h2 className="card-title">{card.title}</h2>
+                            <p>{card.content}</p>
+                        </div>
                     </div>
-                </div>
-            ))}
+                );
+            })}
         </ContentWrapper>
     );
 }
