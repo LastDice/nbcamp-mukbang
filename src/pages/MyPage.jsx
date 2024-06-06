@@ -149,8 +149,6 @@ export default function MyPage() {
                 ))}
             </div>
 
-            <div>푸더</div>
-
             <MyPageModal
                 isVisible={showModal}
                 onClose={() => setShowModal(false)}
