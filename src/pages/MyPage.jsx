@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import MyPageModal from '../components/MyPageModal';
-import supabase from '../_lib/Supabase';
+import supabase from '../_lib/Supabase.js';
 import Header from '../components/Header';
 
 export default function MyPage() {

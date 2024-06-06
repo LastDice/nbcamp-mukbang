@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import supabase from './_lib/Supabase.tsx';
+import supabase from './_lib/Supabase.js';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import LoginPage from './pages/LoginPage.jsx';
 import MainPage from './pages/MainPage.jsx';

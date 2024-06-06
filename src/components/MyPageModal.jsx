@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import supabase from '../_lib/Supabase';
+import supabase from '../_lib/Supabase.js';
 
 function MyPageModal({ isVisible, onClose, onSave, currentImage, currentNickname, currentDescription, updateProfile }) {
     const defaultImageUrl =

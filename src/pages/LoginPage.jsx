@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import supabase, { SupabaseProviders } from '../_lib/Supabase.tsx';
+import supabase, { SupabaseProviders } from '../_lib/Supabase.js';
 
 export default function LoginPage({ signIn, setSignIn, updateSignIn }) {
     const navigate = useNavigate();
