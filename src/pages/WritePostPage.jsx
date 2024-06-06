@@ -73,7 +73,7 @@ const WritePostPage = () => {
                         const result = await supabase.writePosts(title, value);
                         if (result.success) {
                             alert('글 작성 성공');
-                            navigate('/mypage');
+                            navigate('/');
                         } else return alert(`글 작성 실패: ${result.message}`);
                     }}
                 >
