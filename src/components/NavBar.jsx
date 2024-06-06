@@ -20,7 +20,7 @@ function NavBar() {
     const navigate = useNavigate();
 
     const handleCreateClick = () => {
-        navigate('/write');
+        navigate('/write/:id');
     };
 
     return (

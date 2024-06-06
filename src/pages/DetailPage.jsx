@@ -153,13 +153,6 @@ export default function DetailPage() {
         return '';
     }
 
-    const handleDeleteDatas = async () => {
-        const { error } = await supabase.from('posts').delete().eq('post_id', id);
-        if (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
-
     return (
         <Container>
             <div className="navbar bg-base-100">
@@ -203,7 +196,6 @@ export default function DetailPage() {
             </div>
 
             <div>
-                <MainImgBox />
                 <DetileTitle>
                     <p>{datas.title}</p>
                 </DetileTitle>
@@ -211,9 +203,7 @@ export default function DetailPage() {
                     <ToggleBtn className="btn border-none " onClick={naviateEditReviwPage}>
                         수정
                     </ToggleBtn>
-                    <DeleteBtn className="btn border-none" onClick={handleDeleteDatas}>
-                        삭제
-                    </DeleteBtn>
+                    <DeleteBtn className="btn border-none">삭제</DeleteBtn>
                 </BtnBox>
                 <ContentBox>
                     <MDEditor.Markdown
