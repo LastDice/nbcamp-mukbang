@@ -1,10 +1,19 @@
+import { useNavigate } from 'react-router-dom';
 import supabase, { SupabaseProviders } from '../_lib/Supabase.tsx';
 
 export default function LoginPage({ signIn, setSignIn, updateSignIn }) {
+    const navigate = useNavigate();
+
+    const handleNavigateMainPage = () => {
+        navigate('/');
+    };
+
     return (
         <>
             <div className="hero min-h-screen bg-base-200 flex flex-col justify-center">
-                <div className="btn btn-ghost text-5xl mb-10">MUKBANG</div>
+                <div className="btn btn-ghost text-5xl mb-10" onClick={handleNavigateMainPage}>
+                    MUKBANG
+                </div>
                 <div className="card w-96 shrink-0 shadow-2xl bg-base-100 p-10">
                     <div className="text-2xl font-semibold w-full text-center">로그인</div>
                     <br />
