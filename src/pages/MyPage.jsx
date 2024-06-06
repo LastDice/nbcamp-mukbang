@@ -100,12 +100,13 @@ export default function MyPage() {
             <Header searchWord={searchWord} onSearchChange={onSearchChange} />
 
             <div className="container mx-auto py-40 px-30 flex gap-20">
+                {' '}
+                {/* ml-auto를 mx-auto로 변경 */}
                 <div className="relative">
                     <div className="rounded-full overflow-hidden object-contain h-48 w-48">
                         <img src={profileImage} alt="Profile" />
                     </div>
                 </div>
-
                 <div className="my-auto flex flex-col gap-3">
                     <h1 className="text-3xl font-medium">{nickname}</h1>
                     <p className="text-gray-400">{description}</p>
