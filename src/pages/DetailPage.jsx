@@ -40,13 +40,12 @@ const DeleteBtn = styled.button`
 
 const ContentBox = styled.div`
     width: 1000px;
-    height: 950px;
+    height: 2000px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+
     margin: 0 auto;
-    margin-top: 30px;
 `;
 
 const MainImgBox = styled.div`
