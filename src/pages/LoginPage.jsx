@@ -2,47 +2,44 @@ import Supabase, { SupabaseProviders } from '../_lib/Supabase.tsx';
 
 const supabase = new Supabase();
 
-export default function LoginPage({ signIn, setSignIn, updateSignIn, posts }) {
+export default function LoginPage({ signIn, setSignIn, updateSignIn }) {
     return (
-        <div className="flex flex-col space-y-5 p-14">
-            {signIn ? (
-                <button
-                    type="button"
-                    onClick={async () => {
-                        await supabase.signOut();
-                        await updateSignIn();
-                    }}
-                    className="btn btn-primary"
-                >
-                    로그아웃
-                </button>
-            ) : (
-                <div className="flex space-x-4 w-full">
-                    {Object.keys(SupabaseProviders).map((provider, index) => (
+        <>
+            <div className="hero min-h-screen bg-base-200 flex flex-col justify-center">
+                <div className="btn btn-ghost text-5xl mb-10">MUKBANG</div>
+                <div className="card w-96 shrink-0 shadow-2xl bg-base-100 p-10">
+                    <div className="text-2xl font-semibold w-full text-center">로그인</div>
+                    <br />
+                    {signIn ? (
                         <button
                             type="button"
                             onClick={async () => {
-                                await supabase.signIn(provider);
+                                await supabase.signOut();
                                 await updateSignIn();
                             }}
-                            className="btn btn-info"
-                            key={index}
+                            className="btn btn-primary"
                         >
-                            {provider}로 로그인
+                            로그아웃
                         </button>
-                    ))}
-                </div>
-            )}
-            <div className="grid grid-cols-4 gap-4 bg-white shadow-2xl p-5 rounded-2xl">
-                {posts.map((post) => (
-                    <div className="card bg-base-100 shadow-xl" key={post.id}>
-                        <div className="card-body">
-                            <h2 className="card-title">{post.title}</h2>
-                            <p>{post.content}</p>
+                    ) : (
+                        <div className="flex flex-col items-center justify-center w-full">
+                            {Object.keys(SupabaseProviders).map((provider, index) => (
+                                <button
+                                    type="button"
+                                    onClick={async () => {
+                                        await supabase.signIn(provider);
+                                        await updateSignIn();
+                                    }}
+                                    className="btn h-9 min-h-9 btn-primary m-1 w-full rounded-3xl"
+                                    key={index}
+                                >
+                                    {provider}로 로그인
+                                </button>
+                            ))}
                         </div>
-                    </div>
-                ))}
+                    )}
+                </div>
             </div>
-        </div>
+        </>
     );
 }
