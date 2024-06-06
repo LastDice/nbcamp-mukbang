@@ -118,7 +118,7 @@ export default function DetailPage() {
     };
 
     const naviateEditReviwPage = () => {
-        navigate('/edit/:id');
+        navigate(`/update/${id}`);
     };
 
     const handleMyPageClick = () => {

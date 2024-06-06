@@ -99,6 +99,30 @@ class Supabase {
         };
     }
 
+    async updatePost(post_id: string, title: string, content: string): Promise<Result> {
+        const isSignIn = await this.isSignIn();
+        if (!isSignIn) {
+            return {
+                success: false,
+                message: '로그인이 필요합니다.'
+            };
+        }
+
+        const result = await this.supabase.from('posts').update({ title, content }).eq('id', post_id);
+
+        if (result.error) {
+            return {
+                success: false,
+                message: '글 수정에 실패했습니다: ' + result.statusText
+            };
+        }
+
+        return {
+            success: true,
+            message: '성공적으로 수정되었습니다.'
+        };
+    }
+
     async isLiking(post_id: string): Promise<boolean> {
         const isSignIn = await this.isSignIn();
         if (!isSignIn) return false;
