@@ -39,15 +39,82 @@ class Supabase {
         return !!session.data.session;
     }
 
+    async getSession() {
+        const {data,error} = await this.supabase.auth.getSession();
+        if(error) {
+            console.error(error)
+        } else {
+            return data
+        }
+    }
+    async updateUser(nickname, description, imageUrl, user) {
+        // 로그로 요청 데이터 출력
+        console.log('Updating user with data:', { nickname, description, imageUrl });
+      
+        // API 호출
+        const response = await this.supabase
+          .from('profiles')
+          .update({
+            nickname: nickname,
+            description: description,
+            // imageUrl: imageUrl
+          })
+          .eq('id', user.id);
+      
+        // API 응답 로그 출력
+        console.log('API response:', response);
+      
+        if (!response) {
+          console.error('API response is undefined');
+          return false;
+        }
+      
+        const { data, error } = response;
+      
+        if (error) {
+          console.error('Error updating user:', error);
+          return false;
+        }
+      
+        return true;
+      }
+      
+
+    
+    async signInEmail(email: string, password: string) {
+        await this.supabase.auth.signInWithPassword({
+            email,
+            password
+        });
+        return this.isSignIn();
+    }
+
+    async registerEmail(email: string, password: string) {
+        await this.supabase.auth.signUp({
+            email,
+            password
+        });
+        return this.isSignIn();
+    }
+
     async signIn(provider: string) {
-        await this.supabase.auth.signInWithOAuth({
+        const response = await this.supabase.auth.signInWithOAuth({
             provider: provider as Provider
         });
+        response.data.provider
         return this.isSignIn();
     }
 
     async signOut() {
         return await this.supabase.auth.signOut();
+    }
+    async getPostsByUserId(userId){
+        const posts = await this.supabase
+                    .from('posts')
+                    .select('post_id, title, content')
+                    .eq('post_id', userId);
+        return posts
+
     }
 
     async getPosts(): Promise<Post[]> {
@@ -253,7 +320,9 @@ class Supabase {
         }
 
         const user_data = await this.supabase.auth.getUser();
-        const { data, error } = await this.supabase.storage.from('profile_img').upload(file.name, file);
+        console.log('supbase caller file => ',  file, file.name )
+        const filePath = `${Date.now()} ${file.name}`
+        const { data, error } = await this.supabase.storage.from('profile-img').upload(filePath, file);
         if (error) {
             return {
                 success: false,
@@ -292,7 +361,7 @@ class Supabase {
     }
 
     async getProfileImg(): Promise<string> {
-        const img_data = this.supabase.storage.from('profile_img').getPublicUrl(
+        const img_data = this.supabase.storage.from('profile-img').getPublicUrl(
             await (async () => {
                 const isSignIn = await this.isSignIn();
                 if (isSignIn) {
@@ -338,6 +407,6 @@ class Supabase {
         return this.supabase.storage.from('images').getPublicUrl(image_path).data.publicUrl;
     }
 }
-
-export default Supabase;
+const supabase = new Supabase();
+export default supabase;
 export { SupabaseProviders };

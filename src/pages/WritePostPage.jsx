@@ -2,10 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import MDEditor from '@uiw/react-md-editor';
-import Supabase from '../_lib/Supabase.tsx';
+import supabase from '../_lib/Supabase.tsx';
 import Header from '../components/Header.jsx';
-
-const supabase = new Supabase();
 
 const WritePostPage = () => {
     const [title, setTitle] = useState('');
