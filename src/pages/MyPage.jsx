@@ -10,8 +10,8 @@ const supabase = createClient(
 );
 
 const extractImageUrl = (content) => {
-    const imageUrlMatch = content.match(/!\[.*?\]\((.*?)\)/);
-    return imageUrlMatch ? imageUrlMatch[1] : '../public/img/mukbang.png';
+    const imageUrlMatch = content.match(/!\[.*?]\((.*?)\)/);
+    return imageUrlMatch[1] ? imageUrlMatch[1] : '/img/mukbang.png';
 };
 
 export default function MyPage() {

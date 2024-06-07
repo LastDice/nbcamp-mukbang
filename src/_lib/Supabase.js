@@ -49,10 +49,8 @@ class Supabase {
             return false;
         }
 
-        const { data, error } = response;
-
-        if (error) {
-            console.error('Error updating user:', error);
+        if (response.error) {
+            console.error('Error updating user:', response.error);
             return false;
         }
 
@@ -76,10 +74,9 @@ class Supabase {
     }
 
     async signIn(provider) {
-        const response = await this.supabase.auth.signInWithOAuth({
+        await this.supabase.auth.signInWithOAuth({
             provider
         });
-        response.data.provider;
         return this.isSignIn();
     }
 

@@ -69,8 +69,8 @@ function MainContent({ searchWord }) {
     }, []);
 
     const extractImageUrl = (content) => {
-        const imageUrlMatch = content.match(/!\[.*?\]\((.*?)\)/);
-        return imageUrlMatch ? imageUrlMatch[1] : '/public/img/mukbang.png';
+        const imageUrlMatch = content.match(/!\[.*?]\((.*?)\)/);
+        return imageUrlMatch ? imageUrlMatch[1] : '/img/mukbang.png';
     };
 
     const filteredCards = cards.filter(
