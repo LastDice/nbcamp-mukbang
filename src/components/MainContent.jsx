@@ -7,8 +7,7 @@ import { createClient } from '@supabase/supabase-js';
 const ContentWrapper = styled.div`
     display: flex;
     flex-wrap: wrap;
-    margin: auto;
-    justify-content: space-between;
+    margin: 30px;
     max-width: 1440px;
 
     img {
@@ -19,12 +18,12 @@ const ContentWrapper = styled.div`
     }
 
     .card {
-        margin-top: 30px;
+        margin: 30px;
     }
 
     .card-body {
         width: 300px;
-        height: 300px;
+        height: 250px;
     }
 
     .card-rating {
@@ -33,7 +32,7 @@ const ContentWrapper = styled.div`
 
     p {
         width: 290px;
-        height: 30px;
+        height: 10px;
         overflow: hidden;
         text-overflow: ellipsis;
     }
@@ -79,7 +78,7 @@ function MainContent({ searchWord }) {
             {filteredCards.map((card) => (
                 <div
                     key={card.id}
-                    className="card card-compact w-80 bg-base-100 shadow-xl"
+                    className="card card-compact w-70 bg-base-100 shadow-xl"
                     onClick={() => handleCreateClick(card.post_id)}
                 >
                     <figure className="food-photo">

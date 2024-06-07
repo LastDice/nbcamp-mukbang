@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import Search from './Search.jsx';
+import signIn from '../pages/LoginPage.jsx';
 
 const HeaderWrapper = styled.div`
     display: flex;
@@ -59,6 +60,7 @@ function Header({ searchWord, onSearchChange }) {
                                     <span className="badge">New</span>
                                 </a>
                             </li>
+
                             <li>
                                 <a onClick={handleLoginClick}>로그인</a>
                             </li>
