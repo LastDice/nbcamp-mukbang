@@ -48,8 +48,9 @@ export default function MyPage() {
                 console.error('User is not authenticated');
                 return { success: false, message: 'User is not authenticated' };
             }
+            console.log(sessionData);
+            const userId = sessionData.session.user.id;
 
-            const userId = sessionData.user;
             const { error } = await supabase
                 .from('profiles')
                 .update({ nickname: nickname, description: description, avatarurl: avatarurl })
@@ -79,7 +80,8 @@ export default function MyPage() {
                     console.error('Error fetching data:', postError);
                 } else {
                     // 현재 사용자 정보 가져오기
-                    const { data: userData, error: userError } = await supabase.from('profiles').select('id').single();
+                    const { data: userData, error: userError } = await supabase.from('profiles').select().single();
+                    console.log(userData);
 
                     if (userError) {
                         console.error('Error fetching user data:', userError);
@@ -92,6 +94,7 @@ export default function MyPage() {
 
                         // 필터링된 게시물을 상태로 설정
                         setCards(userPosts);
+                        handleSaveChanges(userData.avatarurl, userData.nickname, userData.description);
                     }
                 }
             } catch (error) {
@@ -147,7 +150,7 @@ export default function MyPage() {
                     return (
                         <div
                             key={card.post_id}
-                            className="card card-compact border-t border-b border-bg-base-700 shadow py-5 flex flex-col md:flex-row gap-3"
+                            className="card card-compact border-t border-b border-bg-base-700 shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)] py-5 flex flex-col md:flex-row gap-3"
                             onClick={() => handleCreateClick(card.post_id)}
                         >
                             <figure className="food-photo object-cover h-48 w-96">

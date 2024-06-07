@@ -6,7 +6,7 @@ import styled from 'styled-components';
 
 const Container = styled.div`
     max-width: 1440px;
-    min-height: 2500px;
+    min-height: 3000px;
     margin: 0 auto;
 `;
 
@@ -40,13 +40,12 @@ const DeleteBtn = styled.button`
 
 const ContentBox = styled.div`
     width: 1000px;
-    height: 950px;
+    height: 2000px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+
     margin: 0 auto;
-    margin-top: 30px;
 `;
 
 const MainImgBox = styled.div`
@@ -133,23 +132,14 @@ export default function DetailPage() {
         navigate('/login');
     };
 
-    // const [comments, setComments] = useState([]);
-    // const [newComment, setNewComment] = useState('');
-
-    // const handleCommentChange = (e) => {
-    //     setNewComment(e.target.value);
-    // };
-
-    // const handleSubmitComment = (e) => {
-    //     e.preventDefault();
-    //     if (newComment.trim() !== '') {
-    //         setComments([...comments, newComment]);
-    //         setNewComment('');
-    //     }
-    // };
-
     const { id } = useParams();
     const [datas, setDatas] = useState(null);
+
+    const deleteBtn = () => {
+        const newDeleteBtn = datas.fliter((data) => data.post_id !== post_id);
+        setDatas(newDeleteBtn);
+        navigate('/');
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -218,7 +208,9 @@ export default function DetailPage() {
                     <ToggleBtn className="btn border-none " onClick={naviateEditReviwPage}>
                         수정
                     </ToggleBtn>
-                    <DeleteBtn className="btn border-none">삭제</DeleteBtn>
+                    <DeleteBtn className="btn border-none" onClick={deleteBtn}>
+                        삭제
+                    </DeleteBtn>
                 </BtnBox>
                 <ContentBox>
                     <MDEditor.Markdown
@@ -245,8 +237,6 @@ export default function DetailPage() {
                                         type="text"
                                         placeholder="내용을 입력해주세요!"
                                         className="w-4/5 h-48  ml-10 mt-12 text-base resize-none"
-                                        // value={newComment}
-                                        // onChange={handleCommentChange}
                                     />
                                     <div className="modal-action">
                                         <form method="dialog" className="mb-2">
@@ -275,12 +265,7 @@ export default function DetailPage() {
                     <span>홍길순</span>
                 </ReviwProfile>
                 <ReviwComment>
-                    <ReviwText>
-                        {/* {comments.map((comment, index) => (
-                            <div key={index}>{comment}</div>
-                        ))} */}
-                        저는 경기도에 살아서 부산 갈 일이 없지만, 꼭 한 번 가서 먹으러 가겠습니다!!
-                    </ReviwText>
+                    <ReviwText>저는 경기도에 살아서 부산 갈 일이 없지만, 꼭 한 번 가서 먹으러 가겠습니다!!</ReviwText>
                 </ReviwComment>
             </ReviwBox>
         </Container>
