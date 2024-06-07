@@ -30,16 +30,17 @@ class Supabase {
         }
     }
 
-    async updateUser(nickname, description, imageUrl, user) {
-        console.log('Updating user with data:', { nickname, description, imageUrl });
+    async updateUser(nickname, description, avatarurl, userId) {
+        console.log('Updating user with data:', { nickname, description, avatarurl });
 
         const response = await this.supabase
             .from('profiles')
             .update({
                 nickname: nickname,
-                description: description
+                description: description,
+                avatarurl: avatarurl
             })
-            .eq('id', user.id);
+            .eq('id', userId);
 
         console.log('API response:', response);
 
