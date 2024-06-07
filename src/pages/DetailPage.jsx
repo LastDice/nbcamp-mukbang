@@ -1,12 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
 import MDEditor from '@uiw/react-md-editor';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 const Container = styled.div`
     max-width: 1440px;
-    min-height: 3000px;
     margin: 0 auto;
 `;
 
@@ -15,18 +14,15 @@ const DetileTitle = styled.div`
     height: 50px;
     display: flex;
     justify-content: center;
-    margin: 0 auto;
     font-size: 30px;
-    margin-top: 20px;
+    margin: 20px auto 0;
 `;
 
 const BtnBox = styled.div`
     width: 1000px;
-    height: 50px;
     display: flex;
     justify-content: flex-end;
-    margin: 0 auto;
-    margin-top: 20px;
+    margin: 20px auto 0;
 `;
 
 const ToggleBtn = styled.button`
@@ -40,30 +36,17 @@ const DeleteBtn = styled.button`
 
 const ContentBox = styled.div`
     width: 1000px;
-    height: 2000px;
     display: flex;
     flex-direction: column;
     align-items: center;
-
     margin: 0 auto;
-`;
-
-const MainImgBox = styled.div`
-    width: 1000px;
-    height: 400px;
-    display: flex;
-    justify-content: center;
-    margin: 0 auto;
-    margin-top: 50px;
-    background-color: aqua;
 `;
 
 const ReviwTitleBox = styled.div`
     width: 1000px;
     display: flex;
     justify-content: center;
-    margin: 0 auto;
-    margin-top: 30px;
+    margin: 30px auto 0;
 `;
 
 const ReviwTitle = styled.div`
@@ -135,7 +118,7 @@ export default function DetailPage() {
     const { id } = useParams();
     const [datas, setDatas] = useState(null);
 
-    const deleteBtn = () => {
+    const deleteBtn = (post_id) => {
         const newDeleteBtn = datas.fliter((data) => data.post_id !== post_id);
         setDatas(newDeleteBtn);
         navigate('/');
@@ -200,7 +183,7 @@ export default function DetailPage() {
                 </div>
             </div>
 
-            <div>
+            <div className="flex flex-col space-y-5">
                 <DetileTitle>
                     <p>{datas.title}</p>
                 </DetileTitle>
@@ -208,14 +191,14 @@ export default function DetailPage() {
                     <ToggleBtn className="btn border-none " onClick={naviateEditReviwPage}>
                         수정
                     </ToggleBtn>
-                    <DeleteBtn className="btn border-none" onClick={deleteBtn}>
+                    <DeleteBtn className="btn border-none" onClick={() => deleteBtn(datas.post_id)}>
                         삭제
                     </DeleteBtn>
                 </BtnBox>
                 <ContentBox>
                     <MDEditor.Markdown
                         source={datas.content}
-                        className="w-[900px] h-[950px] bg-transparent text-center"
+                        className="w-[900px] bg-transparent text-center"
                     />
                 </ContentBox>
             </div>
