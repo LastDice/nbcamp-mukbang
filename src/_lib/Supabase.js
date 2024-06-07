@@ -1,5 +1,4 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { Provider } from '@supabase/auth-js/src/lib/types';
+import { createClient } from '@supabase/supabase-js';
 
 const SupabaseProviders = Object.freeze({
     Discord: 'discord',
@@ -9,24 +8,7 @@ const SupabaseProviders = Object.freeze({
     Twitch: 'twitch'
 });
 
-export type Result = {
-    success: boolean;
-    message: string;
-    data?: string;
-};
-
-export type Post = {
-    post_id: string;
-    created_at: string;
-    author_uuid: string;
-    title: string;
-    content: string;
-    post_image?: string;
-};
-
-// noinspection JSUnusedGlobalSymbols
 class Supabase {
-    private supabase: SupabaseClient<any, any, any>;
     constructor() {
         this.supabase = createClient(
             'https://okzounnvdejvweamyzsd.supabase.co',
@@ -39,10 +21,65 @@ class Supabase {
         return !!session.data.session;
     }
 
-    async signIn(provider: string) {
-        await this.supabase.auth.signInWithOAuth({
-            provider: provider as Provider
+    async getSession() {
+        const { data, error } = await this.supabase.auth.getSession();
+        if (error) {
+            console.error(error);
+        } else {
+            return data;
+        }
+    }
+
+    async updateUser(nickname, description, avatarurl, userId) {
+        console.log('Updating user with data:', { nickname, description, avatarurl });
+
+        const response = await this.supabase
+            .from('profiles')
+            .update({
+                nickname: nickname,
+                description: description,
+                avatarurl: avatarurl
+            })
+            .eq('id', userId);
+
+        console.log('API response:', response);
+
+        if (!response) {
+            console.error('API response is undefined');
+            return false;
+        }
+
+        const { data, error } = response;
+
+        if (error) {
+            console.error('Error updating user:', error);
+            return false;
+        }
+
+        return true;
+    }
+
+    async signInEmail(email, password) {
+        await this.supabase.auth.signInWithPassword({
+            email,
+            password
         });
+        return this.isSignIn();
+    }
+
+    async registerEmail(email, password) {
+        await this.supabase.auth.signUp({
+            email,
+            password
+        });
+        return this.isSignIn();
+    }
+
+    async signIn(provider) {
+        const response = await this.supabase.auth.signInWithOAuth({
+            provider
+        });
+        response.data.provider;
         return this.isSignIn();
     }
 
@@ -50,31 +87,29 @@ class Supabase {
         return await this.supabase.auth.signOut();
     }
 
-    async getPosts(): Promise<Post[]> {
-        const { data } = await this.supabase.from('posts').select();
-
-        return data.reduce(
-            (
-                acc: Post[],
-                post: { id: string; created_at: string; author_uuid: string; title: string; content: string }
-            ) => {
-                const imgReg = /\[IMG](.+?)\[\/IMG]/g;
-                const imgPath = imgReg.exec(post.content);
-                acc.push({
-                    post_id: post.id,
-                    created_at: post.created_at,
-                    author_uuid: post.author_uuid,
-                    title: post.title,
-                    content: post.content,
-                    post_image: imgPath ? imgPath[1] : undefined
-                });
-            }
-        );
+    async getPostsByUserId(userId) {
+        const posts = await this.supabase.from('posts').select('post_id, title, content').eq('post_id', userId);
+        return posts;
     }
 
-    // [IMG=supabase]https://i.imgur.com/1Q6Q6Zz.png[/IMG]
+    async getPosts() {
+        const { data } = await this.supabase.from('posts').select();
 
-    async writePosts(title: string, content: string): Promise<Result> {
+        return data.reduce((acc, post) => {
+            const imgReg = /\[IMG](.+?)\[\/IMG]/g;
+            const imgPath = imgReg.exec(post.content);
+            acc.push({
+                post_id: post.id,
+                created_at: post.created_at,
+                author_uuid: post.author_uuid,
+                title: post.title,
+                content: post.content,
+                post_image: imgPath ? imgPath[1] : undefined
+            });
+        }, []);
+    }
+
+    async writePosts(title, content) {
         const isSignIn = await this.isSignIn();
         if (!isSignIn) {
             return {
@@ -99,7 +134,31 @@ class Supabase {
         };
     }
 
-    async isLiking(post_id: string): Promise<boolean> {
+    async updatePost(post_id, title, content) {
+        const isSignIn = await this.isSignIn();
+        if (!isSignIn) {
+            return {
+                success: false,
+                message: '로그인이 필요합니다.'
+            };
+        }
+
+        const result = await this.supabase.from('posts').update({ title, content }).eq('id', post_id);
+
+        if (result.error) {
+            return {
+                success: false,
+                message: '글 수정에 실패했습니다: ' + result.statusText
+            };
+        }
+
+        return {
+            success: true,
+            message: '성공적으로 수정되었습니다.'
+        };
+    }
+
+    async isLiking(post_id) {
         const isSignIn = await this.isSignIn();
         if (!isSignIn) return false;
 
@@ -112,7 +171,7 @@ class Supabase {
         return data.length > 0;
     }
 
-    async setLiking(post_id: string, liked: boolean): Promise<Result> {
+    async setLiking(post_id, liked) {
         const isSignIn = await this.isSignIn();
         if (!isSignIn) {
             return {
@@ -150,14 +209,14 @@ class Supabase {
         };
     }
 
-    async getPostAvgRating(post_id: string): Promise<number> {
+    async getPostAvgRating(post_id) {
         const { data } = await this.supabase.from('ratings').select('rating').eq('post_id', post_id);
         if (data.length === 0) return 0;
 
-        return data.reduce((acc: number, cur: { rating: number }) => acc + cur.rating, 0) / data.length;
+        return data.reduce((acc, cur) => acc + cur.rating, 0) / data.length;
     }
 
-    async getMyPostRating(post_id: string): Promise<number> {
+    async getMyPostRating(post_id) {
         const isSignIn = await this.isSignIn();
         if (!isSignIn) return 0;
 
@@ -172,7 +231,7 @@ class Supabase {
         return data[0].rating;
     }
 
-    async setPostRating(post_id: string, rating: number): Promise<Result> {
+    async setPostRating(post_id, rating) {
         const isSignIn = await this.isSignIn();
         if (!isSignIn) {
             return {
@@ -183,7 +242,6 @@ class Supabase {
 
         const user_data = await this.supabase.auth.getUser();
 
-        // 본인이 남긴 리뷰가 있는지 확인.
         const { data } = await this.supabase
             .from('ratings')
             .select()
@@ -219,7 +277,7 @@ class Supabase {
         };
     }
 
-    async setProfileImg(file: File): Promise<Result> {
+    async setProfileImg(file) {
         const isSignIn = await this.isSignIn();
         if (!isSignIn) {
             return {
@@ -229,14 +287,15 @@ class Supabase {
         }
 
         const user_data = await this.supabase.auth.getUser();
-        const { data, error } = await this.supabase.storage.from('profile_img').upload(file.name, file);
+        console.log('supbase caller file => ', file, file.name);
+        const filePath = `${Date.now()} ${file.name}`;
+        const { data, error } = await this.supabase.storage.from('profile-img').upload(filePath, file);
         if (error) {
             return {
                 success: false,
                 message: '프로필 이미지 업로드에 실패했습니다: ' + error.message
             };
         }
-
         const profile_data = await this.supabase.from('profile_img').select().eq('user_id', user_data.data.user.id);
         if (profile_data.data.length > 0) {
             const { error } = await this.supabase
@@ -267,8 +326,8 @@ class Supabase {
         };
     }
 
-    async getProfileImg(): Promise<string> {
-        const img_data = this.supabase.storage.from('profile_img').getPublicUrl(
+    async getProfileImg() {
+        const img_data = this.supabase.storage.from('profile-img').getPublicUrl(
             await (async () => {
                 const isSignIn = await this.isSignIn();
                 if (isSignIn) {
@@ -287,8 +346,7 @@ class Supabase {
         return img_data.data.publicUrl;
     }
 
-    async uploadImage(file: File): Promise<Result> {
-        // 랜덤 생성 UUIDv4
+    async uploadImage(file) {
         const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
             const r = (Math.random() * 16) | 0,
                 v = c == 'x' ? r : (r & 0x3) | 0x8;
@@ -310,10 +368,11 @@ class Supabase {
         };
     }
 
-    async getImage(image_path: string): Promise<string> {
+    async getImage(image_path) {
         return this.supabase.storage.from('images').getPublicUrl(image_path).data.publicUrl;
     }
 }
 
-export default Supabase;
+const supabase = new Supabase();
+export default supabase;
 export { SupabaseProviders };

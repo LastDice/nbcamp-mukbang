@@ -1,8 +1,6 @@
 import React from 'react';
 import MDEditor from '@uiw/react-md-editor';
-import Supabase from '../_lib/Supabase.tsx';
-
-const supabase = new Supabase();
+import supabase from '../_lib/Supabase.js';
 
 export default function WritePage() {
     const [value, setValue] = React.useState('** 여기에 글을 작성해주세요 :> **');

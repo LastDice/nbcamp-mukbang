@@ -6,7 +6,7 @@ import styled from 'styled-components';
 
 const Container = styled.div`
     max-width: 1440px;
-    min-height: 2500px;
+    min-height: 3000px;
     margin: 0 auto;
 `;
 
@@ -40,13 +40,12 @@ const DeleteBtn = styled.button`
 
 const ContentBox = styled.div`
     width: 1000px;
-    height: 950px;
+    height: 2000px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+
     margin: 0 auto;
-    margin-top: 30px;
 `;
 
 const MainImgBox = styled.div`
@@ -88,7 +87,7 @@ const ReviwProfile = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 40px;
     margin-left: 20px;
 `;
 
@@ -100,9 +99,9 @@ const ReviwComment = styled.div`
 const ReviwText = styled.p`
     width: 600px;
     height: 180px;
-    resize: none;
     display: flex;
     align-items: center;
+    list-style-type: none;
 `;
 
 const supabase = createClient(
@@ -117,8 +116,30 @@ export default function DetailPage() {
         navigate('/');
     };
 
+    const naviateEditReviwPage = () => {
+        navigate(`/update/${id}`);
+    };
+
+    const handleMyPageClick = () => {
+        navigate('/mypage');
+    };
+
+    const handleProfileEditClick = () => {
+        navigate('/mypage');
+    };
+
+    const handleLoginClick = () => {
+        navigate('/login');
+    };
+
     const { id } = useParams();
     const [datas, setDatas] = useState(null);
+
+    const deleteBtn = () => {
+        const newDeleteBtn = datas.fliter((data) => data.post_id !== post_id);
+        setDatas(newDeleteBtn);
+        navigate('/');
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -136,15 +157,6 @@ export default function DetailPage() {
     if (!datas) {
         return '';
     }
-
-    // const deleteDatas = async () => {
-    //     const { data, error } = await supabase.from('posts').delete().eq('post_id', id);
-    //     if (error) {
-    //         console.error('Error fetching data:', error);
-    //     } else {
-    //         setDatas(data[0]);
-    //     }
-    // };
 
     return (
         <Container>
@@ -172,16 +184,16 @@ export default function DetailPage() {
                             className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52"
                         >
                             <li>
-                                <a className="justify-between">
+                                <a className="justify-between" onClick={handleMyPageClick}>
                                     마이페이지
                                     <span className="badge">New</span>
                                 </a>
                             </li>
                             <li>
-                                <a>프로필 수정</a>
+                                <a onClick={handleProfileEditClick}>프로필 수정</a>
                             </li>
                             <li>
-                                <a>로그인</a>
+                                <a onClick={handleLoginClick}>로그인</a>
                             </li>
                         </ul>
                     </div>
@@ -189,16 +201,22 @@ export default function DetailPage() {
             </div>
 
             <div>
-                <MainImgBox />
                 <DetileTitle>
                     <p>{datas.title}</p>
                 </DetileTitle>
                 <BtnBox>
-                    <ToggleBtn className="btn btn-info">수정</ToggleBtn>
-                    <DeleteBtn className="btn btn-error">삭제</DeleteBtn>
+                    <ToggleBtn className="btn border-none " onClick={naviateEditReviwPage}>
+                        수정
+                    </ToggleBtn>
+                    <DeleteBtn className="btn border-none" onClick={deleteBtn}>
+                        삭제
+                    </DeleteBtn>
                 </BtnBox>
                 <ContentBox>
-                    <MDEditor.Markdown source={datas.content} className="w-[900px] h-[950px]" />
+                    <MDEditor.Markdown
+                        source={datas.content}
+                        className="w-[900px] h-[950px] bg-transparent text-center"
+                    />
                 </ContentBox>
             </div>
 
@@ -215,15 +233,17 @@ export default function DetailPage() {
                         <dialog id="my_modal_4" className="modal">
                             <div className="modal-box w-11/12 max-w-5xl">
                                 <form>
-                                    <input
+                                    <textarea
                                         type="text"
                                         placeholder="내용을 입력해주세요!"
-                                        className="w-4/5 h-48  ml-10 mt-12 text-base"
+                                        className="w-4/5 h-48  ml-10 mt-12 text-base resize-none"
                                     />
                                     <div className="modal-action">
-                                        <form method="dialog">
-                                            <button className="btn mr-4">등록</button>
-                                            <button className="btn">닫기</button>
+                                        <form method="dialog" className="mb-2">
+                                            <button className="btn mr-4" type="submit">
+                                                등록
+                                            </button>
+                                            <button className="btn">Close</button>
                                         </form>
                                     </div>
                                 </form>
@@ -234,18 +254,18 @@ export default function DetailPage() {
             </ReviwTitleBox>
             <ReviwBox>
                 <ReviwProfile>
-                    <div className="avatar">
-                        <div className="w-24 rounded-full">
-                            <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+                    <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar w-[80px]">
+                        <div className="w-[80px] rounded-full">
+                            <img
+                                alt="Tailwind CSS Navbar component"
+                                src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+                            />
                         </div>
                     </div>
                     <span>홍길순</span>
                 </ReviwProfile>
                 <ReviwComment>
-                    <ReviwText>
-                        저는 경기도 쪽에 살아서 부산에 갈 일이 없지만 맛집이라면 얘기가 다르죠! 언젠가는 꼭 먹으러
-                        가겠습니다 ㅎㅎ
-                    </ReviwText>
+                    <ReviwText>저는 경기도에 살아서 부산 갈 일이 없지만, 꼭 한 번 가서 먹으러 가겠습니다!!</ReviwText>
                 </ReviwComment>
             </ReviwBox>
         </Container>

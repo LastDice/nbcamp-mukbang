@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react';
-import Supabase from './_lib/Supabase.tsx';
+import supabase from './_lib/Supabase.js';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import LoginPage from './pages/LoginPage.jsx';
 import MainPage from './pages/MainPage.jsx';
 import DetailPage from './pages/DetailPage.jsx';
 import MyPage from './pages/MyPage.jsx';
 import WritePostPage from './pages/WritePostPage.jsx';
-import EditPostPage from './pages/EditPostPage.jsx';
-
-const supabase = new Supabase();
+import UpdatePostPage from './pages/UpdatePostPage.jsx';
 
 function App() {
     const [posts, setPosts] = useState([]);
@@ -51,7 +49,7 @@ function App() {
                 <Route path="/detail/:id" element={<DetailPage />}></Route>
                 <Route path="/mypage" element={<MyPage />}></Route>
                 <Route path="/write" element={<WritePostPage />}></Route>
-                <Route path="/edit" element={<EditPostPage />}></Route>
+                <Route path="/update/:id" element={<UpdatePostPage />}></Route>
             </Routes>
         </BrowserRouter>
     );
